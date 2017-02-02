@@ -1,0 +1,199 @@
+/* This code is written by Neelkumar Shailesh Bhuva
+   as part of CSE 6341 (Foundations of Programming Languages) 
+   project at the Ohio State University. 
+*/
+#include <iostream>
+#include <cstdio>
+#include <string>
+#include <fstream>
+#include <vector>
+#include <stdlib.h>
+
+using namespace std;
+
+ifstream ifile; //ifile is a stream to input file
+int openParantheses = 0; int closeParantheses = 0; int literalAtom = 0; int numericAtom = 0;
+int sum_nAtoms = 0;
+
+pair<string,string> getNextToken()
+{
+	//cout << "In getNextToken\n";
+	
+	//ifile(i_filename); //argv[1] is the input file name in the commandline argument
+	char buffer;
+	pair<string,string> token;
+	vector<char> literalAtom;
+	vector<char> numericAtom;
+
+	if(!ifile.get(buffer))
+	{
+		cout << "Error reading the input file\n";
+		//abort();
+	}
+	//cout << buffer << "\n";
+	if(ifile.eof())
+	{
+		token.first = "EOF";
+		token.second = "0";
+	}
+	else if(isspace(buffer)) //isspace takes into account whitespace, carriage return and linefeed
+	{
+		//consume if its a whitespace
+		token.first = "space";
+		token.second = "1";
+	}
+	else if(buffer == '(')
+	{
+		token.first = "openParantheses"; 
+		token.second = "2";
+	}
+	else if(buffer == ')')
+	{
+		token.second = "3";
+		token.first = "closeParantheses";
+	}
+	else if(isupper(buffer))
+	{
+		cout << "Uppercase found\n";
+		literalAtom.push_back(buffer);
+		while(1)
+		{
+			if(!ifile.get(buffer)){
+				cout << "Error while reading input file\n";
+			}
+			if(isspace(buffer)) break;
+			if((isupper(buffer)) || (isdigit(buffer)))
+			{
+				literalAtom.push_back(buffer);
+			}
+			else if(buffer == '(')
+			{
+				openParantheses++;
+				break;
+			}
+			else if(buffer == ')')
+			{
+				closeParantheses++;
+				break;
+			}
+			
+		}
+		string a(literalAtom.begin(),literalAtom.end());
+		//cout << a << "\n";
+		token.first = "literalAtom";
+		token.second = a;
+	}
+	else if(isdigit(buffer))
+	{
+		token.first = "numericAtom";
+		numericAtom.push_back(buffer);
+		int flag = 0;
+		while(1)
+		{
+			if(!ifile.get(buffer))
+				cout << "Error while reading input file\n";
+			if(isspace(buffer)) break;
+			if(isupper(buffer))
+			{
+				token.first = "ERROR";
+				numericAtom.push_back(buffer);
+				flag = 1;
+			}
+			if(isdigit(buffer) && flag == 1)
+			{
+				numericAtom.push_back(buffer);
+				continue;
+			}
+			if(isdigit(buffer))
+				numericAtom.push_back(buffer);
+			else if(buffer == '(')
+			{
+				openParantheses++;
+				break;
+			}
+			else if(buffer == ')')
+			{
+				closeParantheses++;
+				break;
+			}
+			
+		}
+		
+		string a(numericAtom.begin(),numericAtom.end());
+		//cout << a << "\n";
+		token.second = a;
+		
+	}
+
+	return token;
+}
+
+int main(int argc, char const *argv[])
+{
+	//cout << "In main function\n" << "First argument :" << argv[1] << " Second argument :" << argv[2] << "\n";
+	pair<string,string> token;
+	
+	string i_filename = argv[1];
+	vector<string> lAtom;
+	vector<string> nAtom;
+
+	ifile.open(i_filename.c_str());//convert string type to char array format as found in c
+	token = getNextToken();
+	//cout << token.first << " " << token.second << "\n"; 
+	if(token.first == "literalAtom")
+	{
+		lAtom.push_back(token.second);
+		literalAtom++;
+	}
+	else if(token.first == "numericAtom")
+	{
+		nAtom.push_back(token.second);
+		numericAtom++;
+	}
+	while(token.first != "EOF" && token.first != "ERROR")
+	{
+		token = getNextToken(); //token contains token category and the value of the token
+		//cout << token.first << " " << token.second << "\n";
+		if(token.first == "ERROR")
+			cout << "ERROR: Invalid token " << token.second << "\n";
+		if(token.first == "space")
+			continue;
+		else if(token.first == "openParantheses")
+			openParantheses++;
+		else if(token.first == "closeParantheses")
+			closeParantheses++;
+		else if(token.first == "literalAtom")
+		{
+			lAtom.push_back(token.second);
+			literalAtom++;
+		}
+		else if(token.first == "numericAtom")
+		{
+			nAtom.push_back(token.second);
+			numericAtom++;
+			int sum = atoi(token.second.c_str());
+			sum_nAtoms += sum;
+		}
+	}
+
+	ifile.close();
+	ofstream ofile; //ofile refers to the output file
+	ofile.open(argv[2]);
+	ofile << "LITERAL ATOM : " << literalAtom << " ";
+	for (int i = 0; i < lAtom.size(); ++i)
+	{
+		ofile << lAtom[i] << ",";
+	}
+	ofile << "\n";
+	ofile << "NUMERIC ATOM : " << numericAtom << " " << sum_nAtoms << "\n";
+	/*for (int i = 0; i < nAtom.size(); ++i)
+	{
+		ofile << nAtom[i] << ",";
+	}
+	ofile << "\n";*/
+	ofile << "OPEN PARANTHESES : " << openParantheses << "\n";
+	ofile << "CLOSE PARANTHESES : " << closeParantheses << "\n";
+	ofile.close();
+	return 0;
+}
+
