@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include "scanner.h"
 #include "binaryTree.h"
+#include "interpreter.h"
 
 using namespace std;
 
@@ -129,9 +130,30 @@ void ParseStart(Scanner* scanner)
 	    {
 	    	throw("Parser Error");
 	    }
-	    bt.Print(bt.root);
-	    //bt.inorderPrint(bt.root);
-	    cout << "\n";
+	    //bt.Print(bt.root);
+	    //cout << "\n";
+	    try
+	    {
+	    	Interpreter ip;
+	    	tree_node* temp = ip.car(bt.root);
+	    	//int temp23 = ip.length(bt.root);
+	    	//cout << temp23 << "\n";
+	    	tree_node* temp1 = ip.cdr(bt.root);
+			tree_node* temp2 = ip.cons(temp,temp1);
+			tree_node* temp5 = ip.car(temp1);
+			tree_node* temp6 = ip.times(temp,temp5);
+			//tree_node* temp3 = ip.atom(temp);
+			//tree_node* temp4 = ip.INT(bt.root);
+			//cout << "SSUp" <<  "\n";
+			cout << temp6->value << "\n";
+			//bt.Print(temp3);
+	    	//bt.inorderPrint(temp5);
+	    }
+	    catch(...)
+	    {
+	    	cout << "Undefined input\n";
+	    	return;
+	    }
 	}while(scanner->GetCurrent().first != "EOF");
 }
 
@@ -153,6 +175,8 @@ int main(int argc, char const *argv[])
 		continue;
 	}
 	}
+	/*if(f == 0)
+		cout << "Parser error : empty file\n";*/
 	//cout << i_filename << "\n";
 	//ifile.open(i_filename.c_str());//convert string type to char array format as found in c
 	scanner->Init();
@@ -172,8 +196,7 @@ int main(int argc, char const *argv[])
 		return 0;
 	}
 	
-	if(f == 0)
-		cout << "Parser error : empty file\n";
+	
 	//ifile.close();
 	//writeToFile(argv[2],lAtom,nAtom,literalAtom,numericAtom,openParantheses,closeParantheses);
 	i_filename = "";
