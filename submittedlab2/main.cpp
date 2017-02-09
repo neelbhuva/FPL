@@ -10,12 +10,11 @@
 #include <stdlib.h>
 #include "scanner.h"
 #include "binaryTree.h"
-#include "interpreter.h"
 
 using namespace std;
 
 //ifstream ifile; //ifile is a stream to input file
-string i_filename; string file_content;
+string i_filename;
 pair<string,string> current;//maintains the current current being analysed by the parser
 int openParantheses = 0; int closeParantheses = 0; int literalAtom = 0; int numericAtom = 0;
 int sum_nAtoms = 0; int p = 0;
@@ -130,34 +129,9 @@ void ParseStart(Scanner* scanner)
 	    {
 	    	throw("Parser Error");
 	    }
-	    //bt.Print(bt.root);
-	    //cout << "\n";
-	    try
-	    {
-	    	Interpreter ip;
-	    	//tree_node* temp = ip.car(bt.root);
-	    	int temp23 = ip.length(bt.root);
-	    	cout << temp23 << "\n";
-	    	//tree_node* temp1 = ip.cdr(bt.root);
-			//tree_node* temp2 = ip.cons(temp,temp1);
-			//tree_node* temp5 = ip.car(temp1);
-			//tree_node* temp6 = ip.times(temp,temp5);
-			//tree_node* temp3 = ip.atom(temp);
-			//tree_node* temp4 = ip.INT(bt.root);
-			//cout << "SSUp" <<  "\n";
-			//cout << temp6->value << "\n";
-			//bt.Print(temp2);
-	    	//bt.inorderPrint(temp5);
-	    	tree_node* result_tree = ip.eval(bt.root);
-	    	ip.inorderPrint(result_tree);
-	    	cout << "\n";
-	    	ip.printSExpression(result_tree);
-	    	cout << "\n";
-	    }
-	    catch(...)
-	    {
-	    	return;
-	    }
+	    bt.Print(bt.root);
+	    //bt.inorderPrint(bt.root);
+	    cout << "\n";
 	}while(scanner->GetCurrent().first != "EOF");
 }
 
@@ -169,18 +143,14 @@ int main(int argc, char const *argv[])
 	Scanner* scanner = new(Scanner);
 	//string i_filename;
 	int f = 0;
-	while(getline(cin,file_content))
+	while(getline(cin,i_filename))
 	{
-	i_filename += file_content;
 	p = 0; f = 1;
-	if(file_content == "")
+	if(i_filename == "")
 	{
 		//cout << "Blank line found\n";
 		continue;
 	}
-	}
-	/*if(f == 0)
-		cout << "Parser error : empty file\n";*/
 	//cout << i_filename << "\n";
 	//ifile.open(i_filename.c_str());//convert string type to char array format as found in c
 	scanner->Init();
@@ -199,8 +169,9 @@ int main(int argc, char const *argv[])
 		cout << "Parser Error  : Terminating the program\n";
 		return 0;
 	}
-	
-	
+	}
+	if(f == 0)
+		cout << "Parser error : empty file\n";
 	//ifile.close();
 	//writeToFile(argv[2],lAtom,nAtom,literalAtom,numericAtom,openParantheses,closeParantheses);
 	i_filename = "";

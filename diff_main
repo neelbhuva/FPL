@@ -1,0 +1,25 @@
+17c17
+< string i_filename; string file_content;
+---
+> string i_filename;
+146c146
+< 	while(getline(cin,file_content))
+---
+> 	while(getline(cin,i_filename))
+148d147
+< 	i_filename += file_content;
+150c149
+< 	if(file_content == "")
+---
+> 	if(i_filename == "")
+155,157d153
+< 	}
+< 	/*if(f == 0)
+< 		cout << "Parser error : empty file\n";*/
+176,177c172,174
+< 	
+< 	
+---
+> 	}
+> 	if(f == 0)
+> 		cout << "Parser error : empty file\n";

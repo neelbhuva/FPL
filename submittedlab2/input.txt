@@ -1,0 +1,3 @@
+(DEFUN F23(X) (PLUS X 12 55))
+(E 4 NIL 5) () NIL (NIL ()) (()) (()())
+

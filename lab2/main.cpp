@@ -153,6 +153,8 @@ int main(int argc, char const *argv[])
 		continue;
 	}
 	}
+	/*if(f == 0)
+		cout << "Parser error : empty file\n";*/
 	//cout << i_filename << "\n";
 	//ifile.open(i_filename.c_str());//convert string type to char array format as found in c
 	scanner->Init();
@@ -172,8 +174,7 @@ int main(int argc, char const *argv[])
 		return 0;
 	}
 	
-	if(f == 0)
-		cout << "Parser error : empty file\n";
+	
 	//ifile.close();
 	//writeToFile(argv[2],lAtom,nAtom,literalAtom,numericAtom,openParantheses,closeParantheses);
 	i_filename = "";

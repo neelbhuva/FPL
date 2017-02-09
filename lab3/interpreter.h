@@ -33,6 +33,9 @@ class Interpreter{
 		tree_node* eval(tree_node*);
 		bool isNumeric(tree_node*);
 		bool in_array(const string&, const vector<string>&);
+		void printSExpression(tree_node*);
+		bool isList(tree_node*);
+		void inorderPrint(tree_node*);
 };
 
 
