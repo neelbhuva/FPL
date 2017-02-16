@@ -36,6 +36,8 @@ class Interpreter{
 		void printSExpression(tree_node*);
 		bool isList(tree_node*);
 		void inorderPrint(tree_node*);
+		bool allListOfLengthTwo(tree_node*);
+		tree_node* COND_eval(tree_node*);
 };
 
 

@@ -1,1 +1,2 @@
 (CONS 2 (CONS 3 (CONS 4 5)))
+(COND ((EQ 6 3) NIL) (NIL T) ((EQ 7 7) (PLUS 6 7)))

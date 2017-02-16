@@ -125,7 +125,7 @@ tree_node* Interpreter::eq(tree_node* s1,tree_node* s2)
 	else
 	{
 		if(s1->value == s2->value)
-			temp = this->createNode("T",NULL,NULL);
+			{temp = this->createNode("T",NULL,NULL); cout << "s1 and s2 are equal\n";}
 		else
 			temp = this->createNode("NIL",NULL,NULL);
 	}
@@ -282,6 +282,7 @@ tree_node* Interpreter::eval(tree_node* s)
 		if(this->length(s) != 3){ cout << "ERROR : Length(s) not equal to 3, cannot perform EQ\n"; throw("");}
 		tree_node* s1 = this->car(this->cdr(s));
 		tree_node* s2 = this->car(this->cdr(this->cdr(s)));
+		cout << car_value << " " << s1->value << " " << s2->value << "\n";
 		if(this->atom(this->eval(s1))->value == "NIL" or this->atom(this->eval(s1))->value == "NIL")
 			throw("");
 		temp = this->eq(this->eval(s1),this->eval(s2));
@@ -301,6 +302,17 @@ tree_node* Interpreter::eval(tree_node* s)
 	else if(car_value == "COND")
 	{
 		//check if any si is not a list or if it is a list then whether length == 2
+		if(allListOfLengthTwo(s))
+		{
+			cout << "Calling COND_eval\n";
+			temp = this->COND_eval(s);
+			//cout << temp->value << "\n";
+		}
+		else
+		{
+			cout << "ERROR in COND : Some si in (COND s1 s2 ...sn) is not a list or has length != 2\n";
+			throw("");
+		}
 
 	}
 	else
@@ -311,7 +323,32 @@ tree_node* Interpreter::eval(tree_node* s)
 	return temp;
 }
 
-void Interpreter::printSExpression(tree_node* s)
+tree_node* Interpreter::COND_eval(tree_node* s)
+{
+	//s includes the COND node
+	tree_node* temp = s;
+	temp = this->cdr(temp);
+	while(temp->left != NULL)
+	{
+		if(this->eval(this->car(this->car(temp)))->value != "NIL")
+		{
+			cout << "True COndition found\n";
+			return this->eval(this->car(this->cdr(this->car(temp))));
+		}
+		else
+		{
+			cout << "False COndition found\n";
+			temp = this->cdr(temp);
+		}
+	}
+	if(temp->left == NULL)
+	{
+		cout << "ERROR : None of the bi's are T in COND\n";
+		throw("");
+	}
+}
+
+/*void Interpreter::printSExpression(tree_node* s)
 {
 	if(s->left == NULL and s->right == NULL)
 		cout << s->value;
@@ -332,6 +369,36 @@ void Interpreter::printSExpression(tree_node* s)
 		cout << "(";
 		this->printSExpression(s->left);
 		this->printSExpression(s->right);
+	}
+}*/
+
+void Interpreter::printSExpression(tree_node* s)
+{
+	if(this->atom(s)->value == "T")
+	{
+		cout << s->value << " ";
+		return;
+	}
+	else
+	{
+		cout << "(";
+		while(s->right->right != NULL)
+		{
+			this->printSExpression(this->car(s));
+			s = this->cdr(s);
+		}
+		if(s->right->right == NULL)
+		{
+			this->printSExpression(this->car(s));
+			if(this->cdr(s)->value == "NIL")
+				cout << ")" << "\n";
+			else
+			{
+				cout << " . ";
+				this->printSExpression(this->cdr(s));
+				cout << ")\n";
+			}
+		}
 	}
 }
 
@@ -396,4 +463,25 @@ void Interpreter::inorderPrint(tree_node* node)
 		cout << node->value << " ";
 		this->inorderPrint(node->right);
 	}
+}
+
+bool Interpreter::allListOfLengthTwo(tree_node* s)
+{
+	//input s has COND as car(s), check for the rest of the tree whether si are list and length == 2 
+	if(this->length(s) < 2)
+		return false;
+	tree_node* temp = s;
+	temp = this->cdr(temp);
+	while(temp->left != NULL)
+	{
+		//cout << length(car(temp)) << "\n";
+		if(isList(this->car(temp)) and length(car(temp)) == 2)
+		{
+			temp = this->cdr(temp);
+		}
+		else
+			return false;
+	}
+	return true;
+	
 }

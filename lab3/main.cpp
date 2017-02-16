@@ -137,7 +137,7 @@ void ParseStart(Scanner* scanner)
 	    	Interpreter ip;
 	    	//tree_node* temp = ip.car(bt.root);
 	    	int temp23 = ip.length(bt.root);
-	    	cout << temp23 << "\n";
+	    	//cout << temp23 << "\n";
 	    	//tree_node* temp1 = ip.cdr(bt.root);
 			//tree_node* temp2 = ip.cons(temp,temp1);
 			//tree_node* temp5 = ip.car(temp1);
@@ -149,8 +149,8 @@ void ParseStart(Scanner* scanner)
 			//bt.Print(temp2);
 	    	//bt.inorderPrint(temp5);
 	    	tree_node* result_tree = ip.eval(bt.root);
-	    	ip.inorderPrint(result_tree);
-	    	cout << "\n";
+	    	//ip.inorderPrint(result_tree);
+	    	cout << "Printing...\n";
 	    	ip.printSExpression(result_tree);
 	    	cout << "\n";
 	    }
