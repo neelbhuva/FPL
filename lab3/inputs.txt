@@ -1,6 +1,43 @@
-5 (  ETTTT
- ( R
 
- ) 4 5532 ZZZ
 
- 	)
+(CONS 2 (CONS 3 (CONS 4 5)))
+(COND ((EQ 6 3) NIL) (NIL T) ((EQ 7 7) (PLUS 6 7)))
+
+(CONS (PLUS 2 3) (CONS 8 (NULL 5))) (CONS (PLUS 2 3) (CONS 8 (NULL 5)))
+(CONS 2 (CONS 3 (CONS 4 5)))
+
+
+(COND ( (NULL NIL) (PLUS 3 4))
+( (NULL NIL) (MINUS 7 6)))
+(CONS NIL NIL)
+(QUOTE 7)
+(CAR (NULL 7))
+(QUOTE 8)
+
+
+
+(COND ( (NULL NIL) (PLUS 3 4))
+( (NULL NIL) (MINUS 7 6)))
+(CONS NIL NIL)
+(QUOTE 7) (PLUS 6 5)
+(MINUS 8 7)
+(NULL 7)
+(CAR (CONS 7 6))
+(MINUS 6 7)
+
+
+
+(EQ (QUOTE X) (QUOTE X))
+(GREATER (PLUS (TIMES (MINUS 1 1) 1) 1) 1)
+(GREATER 7 8)
+(CDR (QUOTE (A B C)))
+(CONS (QUOTE (A (B C))) 8)
+
+
+(CDR (QUOTE (A)))
+(INT (QUOTE (A B)))
+(NULL (QUOTE (())))
+
+
+(INT (CONS 4 5)) (NULL NIL) (PLUS (PLUS 3 5) (CAR (QUOTE (7 8))))
+(COND ((GREATER 8 9) (PLUS 7 8)) ((GREATER 9 10) (MINUS 7 8)))

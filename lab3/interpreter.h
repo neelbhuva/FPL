@@ -16,6 +16,9 @@ using namespace std;
 
 class Interpreter{
 	public:
+		int flag;
+
+	public:
 		int length(tree_node*);
 		tree_node* car(tree_node* s);
 		tree_node* cdr(tree_node* s);
@@ -38,6 +41,7 @@ class Interpreter{
 		void inorderPrint(tree_node*);
 		bool allListOfLengthTwo(tree_node*);
 		tree_node* COND_eval(tree_node*);
+		Interpreter();
 };
 
 

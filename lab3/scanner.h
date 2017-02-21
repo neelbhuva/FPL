@@ -84,6 +84,7 @@ pair<string,string> Scanner::getNextToken()
 	}
 	else if(isupper(i_filename[p]))
 	{
+		token.first = "literalAtom";
 		literalAtom.push_back(i_filename[p]);
 		p++;
 		while(1)
@@ -113,11 +114,18 @@ pair<string,string> Scanner::getNextToken()
 				closeParantheses++;
 				break;
 			}
+			else
+			{
+				token.first = "ERROR";
+				literalAtom.push_back(i_filename[p]);
+				p++;
+				break;
+			}
 			
 		}
 		string a(literalAtom.begin(),literalAtom.end());
 		//cout << a << "\n";
-		token.first = "literalAtom";
+		
 		token.second = a;
 	}
 	else if(isdigit(i_filename[p]))
@@ -165,7 +173,14 @@ pair<string,string> Scanner::getNextToken()
 				//ifile.unget();
 				closeParantheses++;
 				break;
-			}			
+			}	
+			else
+			{
+				token.first = "ERROR";
+				numericAtom.push_back(i_filename[p]);
+				p++;
+				break;
+			}		
 		}		
 		string a(numericAtom.begin(),numericAtom.end());
 		//cout << a << "\n";

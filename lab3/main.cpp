@@ -136,21 +136,24 @@ void ParseStart(Scanner* scanner)
 	    {
 	    	Interpreter ip;
 	    	//tree_node* temp = ip.car(bt.root);
-	    	int temp23 = ip.length(bt.root);
+	    	//int temp23 = ip.length(bt.root);
 	    	//cout << temp23 << "\n";
-	    	//tree_node* temp1 = ip.cdr(bt.root);
+	    	//tree_node* temp1 = ip.car(ip.cdr((bt.root)));
 			//tree_node* temp2 = ip.cons(temp,temp1);
 			//tree_node* temp5 = ip.car(temp1);
 			//tree_node* temp6 = ip.times(temp,temp5);
-			//tree_node* temp3 = ip.atom(temp);
+			//tree_node* temp3 = ip.greater(temp,temp1);
 			//tree_node* temp4 = ip.INT(bt.root);
 			//cout << "SSUp" <<  "\n";
-			//cout << temp6->value << "\n";
-			//bt.Print(temp2);
-	    	//bt.inorderPrint(temp5);
+			
+	    	//bt.inorderPrint(bt.root);
+	    	//cout << "\n";
 	    	tree_node* result_tree = ip.eval(bt.root);
+	    	//cout << "List Notation...\n";
+			//bt.Print(result_tree);
+			//cout << "\nInorder Print...\n";
 	    	//ip.inorderPrint(result_tree);
-	    	cout << "Printing...\n";
+	    	//cout << "\nPrinting...\n";
 	    	ip.printSExpression(result_tree);
 	    	cout << "\n";
 	    }

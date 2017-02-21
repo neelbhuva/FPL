@@ -13,6 +13,11 @@
 
 using namespace std;
 
+Interpreter::Interpreter()
+{
+	this->flag = 0;
+}
+
 int Interpreter::length(tree_node* s)
 {
 	if(!s)
@@ -104,7 +109,7 @@ tree_node* Interpreter::null(tree_node* s)
 	{
 		temp = this->createNode("T",NULL,NULL);
 	}
-	else if(s->left != NULL and s->right != NULL)
+	else
 	{
 		temp = this->createNode("NIL",NULL,NULL);
 	}
@@ -125,7 +130,10 @@ tree_node* Interpreter::eq(tree_node* s1,tree_node* s2)
 	else
 	{
 		if(s1->value == s2->value)
-			{temp = this->createNode("T",NULL,NULL); cout << "s1 and s2 are equal\n";}
+		{	
+			temp = this->createNode("T",NULL,NULL); 
+			//cout << "s1 and s2 are equal\n";
+		}
 		else
 			temp = this->createNode("NIL",NULL,NULL);
 	}
@@ -138,7 +146,7 @@ tree_node* Interpreter::plus(tree_node* s1, tree_node* s2)
 	if(!s1 or !s2){cout << "ERROR: Plus failed, s1 or s2 is empty"; throw("");}
 	//if(this->length(s1) > 1 or this->length(s2) > 2) //undefined
 	//	throw("");
-	if(!isNumeric(s1) or !isNumeric(s2)){cout << "ERROR: Plus failed " << s1->value << "or" << s2->value << "is not numeric\n"; throw("");}
+	if(!isNumeric(s1) or !isNumeric(s2)){cout << "ERROR: Plus failed " << s1->value << " or " << s2->value << " is not numeric\n"; throw("");}
 	else
 	{
 		int s = atoi(s1->value.c_str()) + atoi(s2->value.c_str());
@@ -156,7 +164,7 @@ tree_node* Interpreter::minus(tree_node* s1, tree_node* s2)
 		throw("");
 	//if(this->length(s1) > 1 or this->length(s2) > 2) //undefined
 	//	throw("");
-	if(!isNumeric(s1) or !isNumeric(s2)){cout << "ERROR: minus failed " << s1->value << "or" << s2->value << "is not numeric\n"; throw("");}
+	if(!isNumeric(s1) or !isNumeric(s2)){cout << "ERROR: minus failed " << s1->value << " or " << s2->value << " is not numeric\n"; throw("");}
 	else
 	{
 		int s = atoi(s1->value.c_str()) - atoi(s2->value.c_str());
@@ -174,7 +182,7 @@ tree_node* Interpreter::times(tree_node* s1, tree_node* s2)
 		throw("");
 	//if(this->length(s1) > 1 or this->length(s2) > 2) //undefined
 	//	throw("");
-	if(!isNumeric(s1) or !isNumeric(s2)){cout << "ERROR: times failed " << s1->value << "or" << s2->value << "is not numeric\n"; throw("");}
+	if(!isNumeric(s1) or !isNumeric(s2)){cout << "ERROR: times failed " << s1->value << " or " << s2->value << " is not numeric\n"; throw("");}
 	else
 	{
 		int s = atoi(s1->value.c_str()) * atoi(s2->value.c_str());
@@ -192,7 +200,7 @@ tree_node* Interpreter::less(tree_node* s1,tree_node* s2)
 		throw("");
 	//if(this->length(s1) > 1 or this->length(s2) > 2) //undefined
 	//	throw("");
-	if(!isNumeric(s1) or !isNumeric(s2)){cout << "ERROR: less failed " << s1->value << "or" << s2->value << "is not numeric\n"; throw("");}
+	if(!isNumeric(s1) or !isNumeric(s2)){cout << "ERROR: less failed " << s1->value << " or " << s2->value << " is not numeric\n"; throw("");}
 	else
 	{
 		if(atoi(s1->value.c_str()) < atoi(s2->value.c_str()))
@@ -210,7 +218,7 @@ tree_node* Interpreter::greater(tree_node* s1,tree_node* s2)
 		throw("");
 	//if(this->length(s1) > 1 or this->length(s2) > 2) //undefined
 	//	throw("");
-	if(!isNumeric(s1) or !isNumeric(s2)){cout << "ERROR: greater failed " << s1->value << "or" << s2->value << "is not numeric\n"; throw("");}
+	if(!isNumeric(s1) or !isNumeric(s2)){cout << "ERROR: greater failed " << s1->value << " or " << s2->value << " is not numeric\n"; throw("");}
 	else
 	{
 		if(atoi(s1->value.c_str()) > atoi(s2->value.c_str()))
@@ -239,13 +247,13 @@ tree_node* Interpreter::eval(tree_node* s)
 	if(this->in_array(car_value,arithmetic))
 	{
 		//cout << "Arithmetic\n";
-		if(this->length(s) != 3){ cout << "ERROR : Length(s) not equal to 3\n"; throw("");}
+		if(this->length(s) != 3){ cout << "ERROR : Length(s) not equal to 3 for " << car_value << "\n"; throw("");}
 		tree_node* s1 = this->car(this->cdr(s));
 		tree_node* s2 = this->car(this->cdr(this->cdr(s)));
-		cout << car_value << " " << s1->value << " " << s2->value << "\n";
+		//cout << car_value << " " << s1->value << " " << s2->value << "\n";
 		if(!isNumeric(this->eval(s1)) or !isNumeric(this->eval(s2)))
 		{	
-			cout << "ERROR : Not numeric, cannot perform arithmetic operation\n"; 
+			cout << "ERROR : " << this->eval(s1)->value << " or " << this->eval(s2)->value << " not numeric, cannot perform " << car_value << " operation\n"; 
 			throw("");
 		}
      	if(car_value == "PLUS"){ temp = plus(this->eval(s1),this->eval(s2)); }
@@ -253,38 +261,43 @@ tree_node* Interpreter::eval(tree_node* s)
       	else if(car_value == "TIMES"){temp = times(this->eval(s1),this->eval(s2)); }
       	else if(car_value == "LESS"){temp = less(this->eval(s1),this->eval(s2)); }
       	else if(car_value == "GREATER"){temp = greater(this->eval(s1),this->eval(s2)); }
-      	else{cout << "Could not map input to the right function\n"; throw("");}
+      	else{cout << " ERROR : Could not map input to the right function\n"; throw("");}
    					
 	}
 	else if(this->in_array(car_value,unary))
 	{
 		if(this->length(s) != 2){ cout << "ERROR : Length(s) not equal to 2, cannot perform unary\n"; throw("");}
 		tree_node* s1 = this->car(this->cdr(s));
-		cout << car_value << " " << s1->value << "\n";
+		//cout << car_value << " " << s1->value << "\n";
      	if(car_value == "ATOM") {temp = atom(this->eval(s1));}
 		else if(car_value == "INT") {temp = INT(this->eval(s1));}      		
 		else if(car_value == "NULL") {temp = null(this->eval(s1));}
-      	else{cout << "Could not map input to the right function\n"; throw("");}
+      	else{cout << "ERROR : Could not map input to the right function\n"; throw("");}
 	}
 	else if(this->in_array(car_value,carcdr))
 	{
-		if(this->length(s) != 2){ cout << "ERROR : Length(s) not equal to 2,cannot perform car or cdr\n"; throw("");}
+		if(this->length(s) != 2){ cout << "ERROR : Length(s) not equal to 2,cannot perform "<< car_value << "\n"; throw("");}
 		tree_node* s1 = this->car(this->cdr(s));
 		if(this->atom(this->eval(s1))->value == "T")
+		{
+			cout << "ERROR : Atom found after performing eval, cannot perform " << car_value << "\n";  
 			throw("");
+		}
      	if(car_value == "CAR") {temp = car(this->eval(s1));}
      	else if(car_value == "CDR") {temp = cdr(this->eval(s1));}
-     	else{cout << "Could not map input to the right function\n"; throw("");}
-     	
+     	else{cout << "ERROR : Could not map input to the right function\n"; throw("");}    	
 	}
 	else if(car_value == "EQ")
 	{
 		if(this->length(s) != 3){ cout << "ERROR : Length(s) not equal to 3, cannot perform EQ\n"; throw("");}
 		tree_node* s1 = this->car(this->cdr(s));
 		tree_node* s2 = this->car(this->cdr(this->cdr(s)));
-		cout << car_value << " " << s1->value << " " << s2->value << "\n";
-		if(this->atom(this->eval(s1))->value == "NIL" or this->atom(this->eval(s1))->value == "NIL")
+		//cout << car_value << " " << s1->value << " " << s2->value << "\n";
+		if(this->atom(this->eval(s1))->value == "NIL" or this->atom(this->eval(s2))->value == "NIL")
+		{
+			cout << "ERROR : Atom not found after performing eval, cannot perform " << car_value << "\n";
 			throw("");
+		}
 		temp = this->eq(this->eval(s1),this->eval(s2));
 	}
 	else if(car_value == "CONS")
@@ -304,9 +317,9 @@ tree_node* Interpreter::eval(tree_node* s)
 		//check if any si is not a list or if it is a list then whether length == 2
 		if(allListOfLengthTwo(s))
 		{
-			cout << "Calling COND_eval\n";
+			//cout << "Calling COND_eval\n";
 			temp = this->COND_eval(s);
-			//cout << temp->value << "\n";
+			cout << temp->value << "\n";
 		}
 		else
 		{
@@ -317,7 +330,7 @@ tree_node* Interpreter::eval(tree_node* s)
 	}
 	else
 	{
-		cout << "ERROR: No match for car(s)\n";
+		cout << "ERROR: car(s) : " << car_value << " cannot be mapped to valid operation\n";
 		throw("");
 	}
 	return temp;
@@ -332,12 +345,12 @@ tree_node* Interpreter::COND_eval(tree_node* s)
 	{
 		if(this->eval(this->car(this->car(temp)))->value != "NIL")
 		{
-			cout << "True COndition found\n";
+			//cout << "True COndition found\n";
 			return this->eval(this->car(this->cdr(this->car(temp))));
 		}
 		else
 		{
-			cout << "False COndition found\n";
+			//cout << "False COndition found\n";
 			temp = this->cdr(temp);
 		}
 	}
@@ -348,35 +361,13 @@ tree_node* Interpreter::COND_eval(tree_node* s)
 	}
 }
 
-/*void Interpreter::printSExpression(tree_node* s)
-{
-	if(s->left == NULL and s->right == NULL)
-		cout << s->value;
-	else if(s->left->left == NULL and s->right->right == NULL and s->right->value == "NIL")
-	{
-		this->printSExpression(s->left);
-		cout << ")" << "\n";
-	}
-	else if(s->left->left == NULL and s->right->right == NULL  and s->right->value != "NIL")
-	{
-		this->printSExpression(s->left);
-		cout << " . ";
-		this->printSExpression(s->right);
-		cout << ")";
-	}
-	else
-	{
-		cout << "(";
-		this->printSExpression(s->left);
-		this->printSExpression(s->right);
-	}
-}*/
-
 void Interpreter::printSExpression(tree_node* s)
 {
 	if(this->atom(s)->value == "T")
 	{
-		cout << s->value << " ";
+		cout << s->value;
+		if(flag == 0)
+			cout << " ";
 		return;
 	}
 	else
@@ -384,19 +375,21 @@ void Interpreter::printSExpression(tree_node* s)
 		cout << "(";
 		while(s->right->right != NULL)
 		{
+			flag = 0;
 			this->printSExpression(this->car(s));
 			s = this->cdr(s);
 		}
 		if(s->right->right == NULL)
 		{
+			flag = 1;
 			this->printSExpression(this->car(s));
 			if(this->cdr(s)->value == "NIL")
-				cout << ")" << "\n";
+				cout << ")";
 			else
 			{
 				cout << " . ";
 				this->printSExpression(this->cdr(s));
-				cout << ")\n";
+				cout << ")";
 			}
 		}
 	}
@@ -416,10 +409,29 @@ tree_node* Interpreter::createNode(string value, tree_node* left, tree_node* rig
 
 bool Interpreter::isNumeric(tree_node* s)
 {
+	//cout << "In isNumeric\n";
 	string value = s->value; int i = 0;
+	/*cout << "value : " << value << "\n";
+	int number; 
+	if((number = stoi(value)) == 0)
+	{
+
+	}
+	cout << "Number is : " << number << "\n";
+	if(number < 0)
+	{
+		number = -1 * number;
+		value = to_string(number);
+		//cout << "Number string is : " << value << "\n";
+	}*/
 	while (i < value.size())
 	{
 		//cout << value[i] << "\n";
+		if(value[i] == '-' and value.size() > 1)
+		{
+			i++;
+			continue;
+		}
 		if(!isdigit(value[i]))
 		{
 			//cout << value[i] << " Not a number\n";
