@@ -42,6 +42,8 @@ class Interpreter{
 		bool allListOfLengthTwo(tree_node*);
 		tree_node* COND_eval(tree_node*);
 		Interpreter();
+		void validate_defun_expression(tree_node*,vector<string>,vector<string>,vector<string>,vector<string>);
+		vector<string> isListOfLiteralAtoms(tree_node*,vector<string>,vector<string>,vector<string>,vector<string>);
 };
 
 

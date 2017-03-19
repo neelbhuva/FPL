@@ -13,7 +13,6 @@
 
 using namespace std;
 
-
 Interpreter::Interpreter()
 {
 	this->flag = 0;
@@ -235,15 +234,10 @@ tree_node* Interpreter::eval(tree_node* s)
 	string art[] = {"PLUS", "MINUS","TIMES","LESS","GREATER"};
 	string un[] = {"ATOM", "INT","NULL"};
 	string cc[] = {"CAR","CDR"};
-	string oth[] = {"T","NIL","CONS","COND","EQ","QUOTE","DEFUN"};
-
-	vector<string> arithmetic (art,art+5);
-	vector<string> unary (un,un+3);
-	vector<string> carcdr (cc,cc+2);
-	vector<string> other (oth,oth+7);
-
+	vector<string> arithmetic (art,art+4);
+	vector<string> unary (un,un+2);
+	vector<string> carcdr (cc,cc+1);
 	tree_node* temp = new tree_node();
-
 	if(this->INT(s)->value == "T")
 		return s;
 	else if(this->null(s)->value == "T")
@@ -328,7 +322,7 @@ tree_node* Interpreter::eval(tree_node* s)
 		{
 			//cout << "Calling COND_eval\n";
 			temp = this->COND_eval(s);
-			//cout << temp->value << "\n";
+			cout << temp->value << "\n";
 		}
 		else
 		{
@@ -336,13 +330,6 @@ tree_node* Interpreter::eval(tree_node* s)
 			throw("");
 		}
 
-	}
-	else if (car_value == "DEFUN")
-	{
-		tree_node* temp = this->cdr(s);
-		this->validate_defun_expression(temp,arithmetic,unary,carcdr,other);			
-		//template<string,T> struct pair a[];
-		//myinterpreter(s,a,d);
 	}
 	else
 	{
@@ -375,66 +362,6 @@ tree_node* Interpreter::COND_eval(tree_node* s)
 		cout << "ERROR : None of the bi's are T in COND\n";
 		throw("");
 	}
-}
-
-void Interpreter::validate_defun_expression(tree_node* s, vector<string> arithmetic,vector<string> un,vector<string> cc,vector<string> other)
-{
-	//s is tree without DEFUN node
-	string F = this->car(s)->value;
-	//s1 is list of formal parameters
-	tree_node* s1 = this->car(this->cdr(s)); 
-	vector<string> formal_param;
-	if(this->in_array(F,arithmetic) || this->in_array(F,un) || this->in_array(F,cc) || this->in_array(F,other))
-	{
-		cout << "ERROR : user defined function name " << F << " cannot be the same as built in function name\n";
-		throw("");
-	}
-	else if(!isList(this->car(this->cdr(s))))
-	{
-		cout << "ERROR : formal parameters (s1) in (DEFUN F s1 s2) is not a list\n";
-		throw("");
-	}
-	else if(isList(this->car(this->cdr(s))))
-	{
-		formal_param = this->isListOfLiteralAtoms(s1,arithmetic,un,cc,other);
-		//cout << formal_param[0] << "\n";
-	}
-
-}
-
-vector<string> Interpreter::isListOfLiteralAtoms(tree_node* s1,vector<string> arithmetic,vector<string> unary,vector<string> carcdr,vector<string> other)
-{
-	cout << "In isListOfLiteralAtoms\n";
-
-	tree_node* temp = s1;
-	vector<string> formal_param;
-	string param;
-	while(temp->left != NULL)
-	{
-		param = this->car(temp)->value;
-		//cout << "param : " << param << "\n"; 
-		if(this->in_array(param,arithmetic) || this->in_array(param,unary) || this->in_array(param,carcdr) || this->in_array(param,other))
-		{
-			cout << "ERROR : Formal parameter " << param << " cannot be the same as built in function name\n";
-			throw("");
-		}
-		if(this->in_array(param,formal_param))
-		{
-			cout << "ERROR : Cannot repeat formal parameters in s1 (DEFUN F s1 s2)\n";
-			throw("");
-		}		
-		if(isupper(param[0]))
-		{
-			formal_param.push_back(param);
-			temp = this->cdr(temp);
-		}
-		else
-		{
-			cout << "ERROR : Formal parameters is not a list of literal atoms\n";
-			throw("");
-		}
-	}
-	return formal_param;
 }
 
 void Interpreter::printSExpression(tree_node* s)

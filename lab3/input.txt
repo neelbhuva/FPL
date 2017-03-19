@@ -1,4 +1,4 @@
-
+(DEFUN HI (EQ) 6)
 
 (PLUS 2 3)    
   
