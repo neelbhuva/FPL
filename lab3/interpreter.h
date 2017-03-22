@@ -70,7 +70,7 @@ class Interpreter{
 		map<string, string> evaluateActualList(tree_node*);
 		vector<string> getFormalParam(string);
 		tree_node* apply(string,tree_node*,map<string, string>);
-
+		tree_node* evlist(tree_node*,map<string, string>);
 };
 
 

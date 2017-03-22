@@ -362,16 +362,21 @@ tree_node* Interpreter::eval(tree_node* s,map<string,string> alist)
 	}
 	else if (true)
 	{
-
+		if(this->atom(this->car(s))->value == "NIL")
+		{
+			cout << "ERROR : Function name cannot be a list in ";
+			this->printSExpression(s); cout << endl;
+			throw("");
+		}
 		//It might be a function call. Check if function name is present in d-list.
 		if(this->isFuncNameInDlist(car_value))
 		{
 			//Function name is found in d-list. Now validate (F s1 s2 ...)
 			this->validateFuncCall(s,car_value);
 			//now evaluate each si's and associate their values with formal parameters
-			map<string,string> temp_alist = this->evaluateActualList(s);
-			printmap(temp_alist);
-			temp = this->apply(car_value,this->cdr(s),temp_alist);
+			//map<string,string> temp_alist = this->evaluateActualList(s);
+			//printmap(temp_alist);
+			temp = this->apply(car_value,this->evlist(this->cdr(s),temp_alist),temp_alist);
 			//cout << temp->value << "\n";
 
 		}
@@ -387,6 +392,16 @@ tree_node* Interpreter::eval(tree_node* s,map<string,string> alist)
 		throw("");
 	}
 	//cout << "eval done\n";
+	return temp;
+}
+
+tree_node* Interpreter::evlist(tree_node* s,map<string, string> alist)
+{
+	tree_node* temp = new tree_node();
+	if(this->null(s)->value == "T")
+		temp->value = "NIL";
+	else 
+		temp = this->cons(this->eval(this->car(s),alist),this->evlist(this->cdr(s),alist));
 	return temp;
 }
 
