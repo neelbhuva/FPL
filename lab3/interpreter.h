@@ -22,10 +22,10 @@ struct dlist{
 
 using namespace std;
 
-void printmap(map<string,string>);
+void printmap(map<string,tree_node*>);
 tree_node* getFuncBody(string);
-bool inalist(string,map<string,string>);
-string getFormalParamValue(string,map<string, string>);
+bool inalist(string,map<string,tree_node*>);
+tree_node* getFormalParamValue(string,map<string,tree_node*>);
 //extern vector<struct dlist*> dl;
 
 class Interpreter{
@@ -53,24 +53,25 @@ class Interpreter{
 		tree_node* less(tree_node* s1,tree_node* s2);
 		tree_node* greater(tree_node* s1,tree_node* s2);
 		tree_node* createNode(string,tree_node*,tree_node*);
-		tree_node* eval(tree_node*,map<string,string> = map<string,string>());
+		tree_node* eval(tree_node*,map<string,tree_node*> = map<string,tree_node*>());
 		bool isNumeric(tree_node*);
 		bool in_array(const string&, const vector<string>&);
 		void printSExpression(tree_node*);
 		bool isList(tree_node*);
 		void inorderPrint(tree_node*);
 		bool allListOfLengthTwo(tree_node*);
-		tree_node* COND_eval(tree_node*);
+		tree_node* COND_eval(tree_node*,map<string,tree_node*> = map<string,tree_node*>());
 		Interpreter();
 		void validate_defun_expression(tree_node*,vector<string>,vector<string>,vector<string>,vector<string>);
 		vector<string> isListOfLiteralAtoms(tree_node*,vector<string>,vector<string>,vector<string>,vector<string>);
 		void printdlist(tree_node*);
 		bool isFuncNameInDlist(string);
 		void validateFuncCall(tree_node*,string);
-		map<string, string> evaluateActualList(tree_node*);
+		map<string,tree_node*> evaluateActualList(string,tree_node*);
 		vector<string> getFormalParam(string);
-		tree_node* apply(string,tree_node*,map<string, string>);
-		tree_node* evlist(tree_node*,map<string, string>);
+		tree_node* apply(string,tree_node*,map<string,tree_node*>);
+		tree_node* evlist(tree_node*,map<string,tree_node*>);
+		map<string,tree_node*> addpairs(vector<string> formal_param, tree_node* actual_values, map<string,tree_node*> alist);
 };
 
 

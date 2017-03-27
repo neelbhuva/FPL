@@ -14,4 +14,4 @@
 ( (EQ X (CAR LIST)) T )
 ( T (MEM X (CDR LIST)))))))
 
-(MEM 3 (QUOTE (4 6 7 8 9 0 3)))
+(MEM 1 (QUOTE (4 6 7 8 9 0 3)))

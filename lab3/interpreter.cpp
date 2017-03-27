@@ -108,6 +108,7 @@ tree_node* Interpreter::INT(tree_node* s)
 
 tree_node* Interpreter::null(tree_node* s)
 {
+	//cout << "In null\n";
 	tree_node* temp = new tree_node();
 	if(!s)
 		throw("");
@@ -236,7 +237,7 @@ tree_node* Interpreter::greater(tree_node* s1,tree_node* s2)
 	return temp;
 }
 
-tree_node* Interpreter::eval(tree_node* s,map<string,string> alist)
+tree_node* Interpreter::eval(tree_node* s,map<string,tree_node*> alist)
 {
 	string art[] = {"PLUS", "MINUS","TIMES","LESS","GREATER"};
 	string un[] = {"ATOM", "INT","NULL"};
@@ -249,7 +250,7 @@ tree_node* Interpreter::eval(tree_node* s,map<string,string> alist)
 	vector<string> other (oth,oth+7);
 
 	tree_node* temp = new tree_node();
-	//printmap(alist);
+	//cout << "In eval : "; printmap(alist); cout << endl;
 	//cout << alist.empty() << "\n";
 	
 	if(this->INT(s)->value == "T")
@@ -261,7 +262,7 @@ tree_node* Interpreter::eval(tree_node* s,map<string,string> alist)
 	else if(this->atom(s)->value == "T" and inalist(s->value,alist))
 	{
 		//it is a formal parameter. return its value.
-		temp->value = getFormalParamValue(s->value,alist);
+		temp = getFormalParamValue(s->value,alist);
 		return temp;
 	}
 	else if(this->atom(s)->value == "T"){ cout << "ERROR: eval failed, " << s->value << " not recognized\n"; throw("");}
@@ -304,7 +305,8 @@ tree_node* Interpreter::eval(tree_node* s,map<string,string> alist)
 		tree_node* s1 = this->car(this->cdr(s));
 		if(this->atom(this->eval(s1,alist))->value == "T")
 		{
-			cout << "ERROR : Atom found after performing eval, cannot perform " << car_value << "\n";  
+			cout << "ERROR : Atom found after performing eval, cannot perform " << car_value << " on ";
+			this->printSExpression(s1); cout << " " << endl;  
 			throw("");
 		}
      	if(car_value == "CAR") {temp = car(this->eval(s1,alist));}
@@ -342,7 +344,7 @@ tree_node* Interpreter::eval(tree_node* s,map<string,string> alist)
 		if(allListOfLengthTwo(s))
 		{
 			//cout << "Calling COND_eval\n";
-			temp = this->COND_eval(s);
+			temp = this->COND_eval(s,alist);
 			//cout << temp->value << "\n";
 		}
 		else
@@ -374,9 +376,10 @@ tree_node* Interpreter::eval(tree_node* s,map<string,string> alist)
 			//Function name is found in d-list. Now validate (F s1 s2 ...)
 			this->validateFuncCall(s,car_value);
 			//now evaluate each si's and associate their values with formal parameters
-			//map<string,string> temp_alist = this->evaluateActualList(s);
+			//map<string,tree_node*> temp_alist = this->evaluateActualList(this->car(s)->value,this->cdr(s));
 			//printmap(temp_alist);
-			temp = this->apply(car_value,this->evlist(this->cdr(s),temp_alist),temp_alist);
+			//temp = this->apply(car_value,this->cdr(s),temp_alist);
+			temp = this->apply(car_value,this->evlist(this->cdr(s),alist),alist);
 			//cout << temp->value << "\n";
 
 		}
@@ -395,7 +398,7 @@ tree_node* Interpreter::eval(tree_node* s,map<string,string> alist)
 	return temp;
 }
 
-tree_node* Interpreter::evlist(tree_node* s,map<string, string> alist)
+tree_node* Interpreter::evlist(tree_node* s,map<string,tree_node*> alist)
 {
 	tree_node* temp = new tree_node();
 	if(this->null(s)->value == "T")
@@ -406,40 +409,55 @@ tree_node* Interpreter::evlist(tree_node* s,map<string, string> alist)
 }
 
 //same as getval(x,z)
-string getFormalParamValue(string param, map<string,string> alist)
+tree_node* getFormalParamValue(string param, map<string,tree_node*> alist)
 {
-	for(map<string,string>::iterator it = alist.begin(); it != alist.end(); ++it)
+	for(map<string,tree_node*>::iterator it = alist.begin(); it != alist.end(); ++it)
 	{
     	if(it->first == param)
-    		return it->second;
+    	{
+    		tree_node* temp = new tree_node();
+    		temp = it->second;
+    		return temp;
+    	}
 	}
 }
 
 //same as bound(x,z)
-bool inalist(string param, map<string,string> alist)
+bool inalist(string param, map<string,tree_node*> alist)
 {
 	cout << "In inalist\n";
-	//printmap(alist);
+	printmap(alist);
 	//cout << param << "\n";
-	for(map<string,string>::iterator it = alist.begin(); it != alist.end(); ++it)
+	for(map<string,tree_node*>::iterator it = alist.begin(); it != alist.end(); ++it)
 	{
 		//cout << "Compare " << param << " with " << it->first << "\n"; 
     	if(it->first == param)
     	{
-    		//cout << "Found\n";
+    		cout << "Found : " << param << endl;;
     		return true;
     	}
 	}
 	return false;
 }
 
-tree_node* Interpreter::apply(string F,tree_node* s, map<string, string> alist)
+tree_node* Interpreter::apply(string F,tree_node* s, map<string,tree_node*> alist)
 {
 	//s is actual parameter list.
 	cout << "In apply : " << F << " " << alist.empty() <<  "\n";
 	tree_node* func_body = getFuncBody(F);
 	cout << "Function body : "; this->printSExpression(func_body); cout << "\n";
-	return this->eval(func_body,alist);
+	return this->eval(func_body,this->addpairs(getFormalParam(F),s,alist));
+}
+
+map<string,tree_node*> Interpreter::addpairs(vector<string> formal_param, tree_node* actual_values, map<string,tree_node*> alist)
+{
+	tree_node* temp = actual_values;
+	for(int i = 0; i < formal_param.size(); i++)
+	{
+		alist[formal_param[i]] = this->car(temp);
+		temp = this->cdr(temp);
+	}
+	return alist;
 }
 
 tree_node* getFuncBody(string F)
@@ -451,26 +469,26 @@ tree_node* getFuncBody(string F)
 	}
 } 
 
-void printmap(map<string,string> alist)
+void printmap(map<string,tree_node*> alist)
 {
-	for(map<string,string>::iterator it = alist.begin(); it != alist.end(); ++it)
+	for(map<string,tree_node*>::iterator it = alist.begin(); it != alist.end(); ++it)
 	{
-    	cout << it->first << " => " << it->second << ' ';
+    	cout << it->first << " => " << it->second->value << ' ';
 	}
     cout << "\n";
 }
 
-tree_node* Interpreter::COND_eval(tree_node* s)
+tree_node* Interpreter::COND_eval(tree_node* s,map<string,tree_node*> alist)
 {
 	//s includes the COND node
 	tree_node* temp = s;
 	temp = this->cdr(temp);
 	while(temp->left != NULL)
 	{
-		if(this->eval(this->car(this->car(temp)))->value != "NIL")
+		if(this->eval(this->car(this->car(temp)),alist)->value != "NIL")
 		{
 			//cout << "True COndition found\n";
-			return this->eval(this->car(this->cdr(this->car(temp))));
+			return this->eval(this->car(this->cdr(this->car(temp))),alist);
 		}
 		else
 		{
@@ -486,18 +504,20 @@ tree_node* Interpreter::COND_eval(tree_node* s)
 }
 
 //evalute actual parameter expressions and bind the values with formal parameters.
-map<string,string> Interpreter::evaluateActualList(tree_node* s)
+map<string,tree_node*> Interpreter::evaluateActualList(string F,tree_node* s)
 {
+	//s is list of actual param, does not have F
 	cout << "Evaluating actual parameters...\n";
-	string F = this->car(s)->value;
+	//string F = this->car(s)->value;
 	vector<string> formal_param = this->getFormalParam(F);
-	map<string,string> alist;
-	tree_node* temp = this->cdr(s);
+	map<string,tree_node*> alist;
+	//tree_node* temp = this->cdr(s);
+	tree_node* temp = s;
 	int i = 0;
 	while(temp->left != NULL)
 	{
 		tree_node* result = this->eval(this->car(temp));
-		alist[formal_param[i]] = result->value; i++;
+		alist[formal_param[i]] = result; i++;
 		temp = this->cdr(temp);
 	}
 	return alist;
