@@ -1,7 +1,5 @@
 (DEFUN HI (E Y NN M N) (PLUS E (ADD 10 10)))
-
 (DEFUN ADD (E Y) (PLUS E Y))
-
 (DEFUN HELL (E Y NN M N) (PLUS 8 7))
 
 (HI (QUOTE 6) 10 7 7 7)
@@ -14,4 +12,86 @@
 ( (EQ X (CAR LIST)) T )
 ( T (MEM X (CDR LIST)))))))
 
-(MEM 1 (QUOTE (4 6 7 8 9 0 3)))
+(MEM 4 (QUOTE (4 6 7 8 9 0 3)))
+
+(DEFUN DIFF (X Y)
+(COND ( (EQ X Y) NIL ) (T T) ) ) 
+
+(DIFF 6 6)
+
+
+(DEFUN UNI (S1 S2)
+(COND ( (NULL S1) S2)
+( (NULL S2) S1)
+( T (COND
+( (MEM (CAR S1) S2)
+(UNI (CDR S1) S2) )
+( T (CONS
+(CAR S1) (UNI (CDR S1) S2) ))))
+))
+
+(UNI (QUOTE(3 4 7)) (QUOTE(4 7)))
+
+(DEFUN UNIQUE(X)
+(COND ( (NULL X) X)
+	  ( (NULL (CDR X)) X)
+	  ( (EQ (CAR X) (CAR(CDR X))) (UNIQUE(CDR X)))
+	  ( T (CONS (CAR X) (UNIQUE (CDR X))))
+)
+)
+
+(UNIQUE (QUOTE(5 5 5 6 6 7 7 7 8 9 10)))
+
+(DEFUN ONE() 2)
+
+(ONE)
+
+(DEFUN FF NIL (PLUS 5 4))
+
+(FF)
+
+(UNIQUE (QUOTE(NIL)))
+
+(DEFUN BOUND(X Z)
+(COND ((NULL Z) NIL)
+	  ((EQ X (CAR(CAR Z))) T)
+	  (T (BOUND (QUOTE X) (CDR Z)))
+)
+)
+
+(DEFUN C (A) (PLUS A A))
+(DEFUN F (D B) (PLUS D B))
+(C 5)
+(F (C 5) 5)
+
+(BOUND (QUOTE X) (QUOTE((A 5)(B 6)(D 7)(X 8))))
+
+(DEFUN MYCDR (X) (CDR X))
+(MYCDR (QUOTE (1 2 3)))
+
+(DEFUN MYCAR (X) (CAR X))
+(MYCAR (QUOTE (1 2 3)))
+
+(DEFUN FFF NIL (PLUS 4 5))
+(FFF)
+
+(DEFUN E (A B) (EQ A B))
+(E 5 5)
+
+(DEFUN A3 (B A) (PLUS B A))
+(A3 2 3)
+
+
+
+(DEFUN A4 (A) (PLUS A 7))
+(A4 2)
+
+(A4 3)
+
+(DEFUN A2 (A B C) (PLUS (PLUS A B) C))
+(A2 3 4 5)
+
+(A4 (C 5))
+
+(COND (NIL 8) (T 9) )
+(COND (() 8) (T 9) )
