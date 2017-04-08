@@ -1,0 +1,65 @@
+
+
+(PLUS 2 3)    
+  
+(MINUS 2 3)     
+
+(CONS 2 (CONS 3 (CONS 4 5)))   
+
+(PLUS (PLUS 2 3 ) ( PLUS  1 4))    
+
+(QUOTE (2 3 4))
+
+(QUOTE ())  
+
+(COND (NIL 3)(NIL 4)(T 67)) 
+
+(COND (NIL 3)(NIL 4)(T 67))  
+
+(MINUS 7 10)   
+
+(TIMES 3 4)   
+
+(LESS 3 5) 
+
+(LESS 5 4)  
+
+(GREATER 5 89)  
+ 
+(NULL ())
+
+(CDR (QUOTE (2 34 45)))
+
+(CONS (QUOTE(2 3 4)) (QUOTE(1 4 6) )) 
+
+(CONS (QUOTE(2 3 4)) (CONS 4 5 ))
+
+(TIMES (MINUS (PLUS 2 3) 9) 2)
+
+(COND (
+(EQ 3 4) 54
+) (
+( EQ (PLUS 2 1) 4) 234
+) (
+(EQ 3 3) 234
+) (
+T 345
+) 
+)
+
+(CDR (QUOTE(2 4)))
+
+(EQ (MINUS 4 3) (TIMES 1 1) )
+(CONS (EQ 1 2) (EQ 3 3))
+(CDR (CONS 7 10))
+(ATOM (QUOTE(10 7)))
+(INT (QUOTE(10 7)))
+(INT (CAR (QUOTE(10 7))))
+(NULL ())
+(CONS NIL NIL)
+(ATOM () )
+(COND ( (LESS 3 2 ) 345)   ((GREATER 9 4)   23)  ) 
+(QUOTE ())
+(QUOTE 89)
+(INT (QUOTE 90))
+(INT (QUOTE ui))

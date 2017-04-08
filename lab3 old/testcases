@@ -1,0 +1,102 @@
+Testing car and cdr:
+
+i/p : (CONS 2 (CONS 3 (CONS 4 5)))
+o/p : car(s) - CONS
+
+i/p : (CONS)
+o/p : car(s) - CONS    cdr(s) - NIL
+
+i/p : CONS
+o/p : car(s) - ERROR    cdr(s) - ERROR
+
+
+Testing atom:
+
+i/p : CONS
+o/p : T
+
+i/p :	CONS   YT
+o/p :	T  T
+
+i/p :	(CONS)
+o/p :	NIL
+
+Testing int:
+
+i/p : 67
+o/p : T
+
+i/p : (67)
+o/p :	T
+
+i/p : 67 67
+o/p : T   T
+
+Testing null :
+
+i/p : NIL
+o/p : T
+
+i/p : (NIL)
+o/p : NIL
+
+i/p : ()
+o/p : T
+
+i/p : (())
+o/p : NIL
+
+Testing eq
+i/p : ((23)23)
+o/p : ERROR : eq failed
+
+i/p : (()23)
+o/p : NIL
+
+i/p : (())
+o/p : ERROR : car failed, undefined input
+
+
+i/p : ((23))
+o/p :  ERROR : car failed, undefined input
+
+i/p :	((23) (23))
+o/p :	ERROR : eq failed
+
+i/p : (23 23)
+o/p :	T
+
+i/p : (ER ER)
+o/p :	T
+
+Testing PLUS
+
+i/p : ((23) (23))
+o/p : ERROR: Plus failed DUMMY or DUMMY is not numeric
+
+i/p : (23 TY)
+o/p : ERROR: Plus failed 23 or TY is not numeric
+
+i/p : 
+o/p :
+
+i/p :
+o/p :
+
+i/p :
+o/p :
+
+i/p :
+o/p :
+
+i/p :
+o/p :
+
+i/p :
+o/p :
+
+i/p :
+o/p :
+
+i/p :
+o/p :

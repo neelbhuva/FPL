@@ -17,7 +17,7 @@ int main()
  
    cout << mapa[a] << endl; //This print ok.
 
-   for( map<double*,T>::iterator ii=mapa.begin(); ii!=mapa.end(); ++ii)
+   for( map<double*,string>::iterator ii=mapa.begin(); ii!=mapa.end(); ++ii)
    {
        cout << (*ii).first << ": " << (*ii).second << endl;
    }

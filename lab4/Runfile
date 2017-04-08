@@ -1,0 +1,9 @@
+./main < input.txt > output.txt
+
+
+To increase the size of call stack :
+>>ulimit -s n
+n is the new size
+
+To check current size :
+>>ulimit -s

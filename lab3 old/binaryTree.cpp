@@ -6,7 +6,7 @@ using namespace std;
 
 BinaryTree::BinaryTree()
 {
-	root = new tree_node;
+	root = new(tree_node);
 	root->value = "DUMMY";
 	root->left = NULL;
 	root->right = NULL;

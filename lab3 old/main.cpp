@@ -11,11 +11,9 @@
 #include "scanner.h"
 #include "binaryTree.h"
 #include "interpreter.h"
-#include "common.h"
 
 using namespace std;
 
-//vector<struct dlist> dl;
 //ifstream ifile; //ifile is a stream to input file
 string i_filename; string file_content;
 pair<string,string> current;//maintains the current current being analysed by the parser
@@ -150,7 +148,6 @@ void ParseStart(Scanner* scanner)
 			
 	    	//bt.inorderPrint(bt.root);
 	    	//cout << "\n";
-	    	//ip.printSExpression(bt.root);
 	    	tree_node* result_tree = ip.eval(bt.root);
 	    	//cout << "List Notation...\n";
 			//bt.Print(result_tree);
@@ -159,7 +156,6 @@ void ParseStart(Scanner* scanner)
 	    	//cout << "\nPrinting...\n";
 	    	ip.printSExpression(result_tree);
 	    	cout << "\n";
-	    	//cout << dl[0].func_name << "\n";
 	    }
 	    catch(...)
 	    {

@@ -133,7 +133,7 @@ void ParseStart(Scanner* scanner)
 	    	throw("Parser Error");
 	    }
 	    //bt.Print(bt.root);
-	    //cout << "\n";
+	   // cout << "\nPrinting done...\n";
 	    try
 	    {
 	    	Interpreter ip;
