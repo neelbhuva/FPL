@@ -1,5 +1,79 @@
 23 
 NIL 
 F
+
+
+(ATOM NIL)
+(ATOM 7)
+(ATOM (PLUS 6 6))
+(ATOM ())
+
+
+(NULL NIL)
+(NULL ())
+
+
+(INT 6)
+(INT (PLUS 8 9))
+(INT F)
+(INT T)
+(INT NIL)
+(INT ())
+
+
+(CAR NIL)
+(CAR ())
+(CAR (CONS 6 (QUOTE(7 8))))
+
+(CDR (QUOTE (7 8 7)))
+
+
+(CONS 6 (QUOTE (7 7)))
+(CONS 6 NIL)
+(CONS 8 ())
+
+(EQ 6 7)
+
+(COND (T 7) (T 9) )
+(COND (F 7) (T 9) )
+(COND (F ()) (T ()) )
+(COND (F 5)(F 8))
+(COND (F NIL)(F NIL))
+
+
+
+
+
+
 (PLUS Y 7)
 (LESS Y I)
+
+(NULL (PLUS 7 8))
+(NULL (CDR (CONS 6 7)))
+(NULL T)
+(NULL F)
+(NULL 7)
+
+(INT NIL)
+
+(CAR (CAR NIL))
+(CAR (CONS 6 7))
+(CAR (CONS (INT 7) (INT 8)))
+(CAR 5)
+
+
+(CDR 7)
+
+
+(CONS 6 7)
+(CONS (QUOTE 6) (QUOTE 8))
+
+
+(EQ (QUOTE (7 7)) (QUOTE 8))
+(EQ T F)
+(EQ R 7)
+
+
+(COND (T 7) (T F) )
+(COND (() 8) (T 8) )
+(COND (F NIL) (T F))

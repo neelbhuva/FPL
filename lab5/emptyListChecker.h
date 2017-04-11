@@ -3,8 +3,8 @@
    project at the Ohio State University. 
 */
 
-#ifndef INTERPRETER_H
-#define INTERPRETER_H
+#ifndef EMPTYLISTCHECKER_H
+#define EMPTYLISTCHECKER_H
 
 #include <iostream>
 #include <string>
@@ -29,7 +29,7 @@ tree_node* getFormalParamValue(string,map<string,tree_node*>);
 void printlast(tree_node*);
 //extern vector<struct dlist*> dl;
 
-class Interpreter{
+class emptyListChecker{
 	public:
 		int flag;
 		//dlist is used to store information about DEFUN expression
@@ -62,7 +62,7 @@ class Interpreter{
 		void inorderPrint(tree_node*);
 		bool allListOfLengthTwo(tree_node*);
 		tree_node* COND_eval(tree_node*,map<string,tree_node*> = map<string,tree_node*>());
-		Interpreter();
+		emptyListChecker();
 		tree_node* validate_defun_expression(tree_node*,vector<string>,vector<string>,vector<string>,vector<string>);
 		vector<string> isListOfLiteralAtoms(tree_node*,vector<string>,vector<string>,vector<string>,vector<string>);
 		void printdlist(tree_node*);

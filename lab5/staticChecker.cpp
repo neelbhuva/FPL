@@ -38,14 +38,14 @@ int staticChecker::length(tree_node* s)
 
 tree_node* staticChecker::car(tree_node* s)
 {
-	if(this->length(s) == 0)
-	{
-		//empty list, undefined.
-		cout << "ERROR : car failed, empty list input\n";
-		throw("");
-	}
 	if(!s or s->left == NULL and s->right == NULL)
 	{
+		if(s->value == "NIL")
+		{
+			//well typed
+			tree_node* t = createNode("1",NULL,NULL);
+			return t;
+		}	
 		//empty binary tree.
 		cout << "ERROR : car failed, undefined input\n";
 		throw("");
@@ -53,43 +53,106 @@ tree_node* staticChecker::car(tree_node* s)
 	else
 		return s->left;
 }
-
+/*
+tree_node* staticChecker::car(tree_node* s)
+{
+	//cout << "In car\n";
+	if(!s or s->left == NULL and s->right == NULL)
+	{
+		if(s->value == "NIL")
+		{
+			//well typed
+			tree_node* t = createNode("List(Nat)",NULL,NULL);
+			return t;
+		}
+		else
+		{
+			//empty binary tree.
+			cout << "TYPE ERROR : car failed, undefined input\n";
+			throw("");
+		}	
+	}
+	else if(isList(s))
+		return s->left;
+	else
+	{
+		cout << "TYPE ERROR : s in (CAR s) is not List(Nat)\n";
+		throw("");
+	}
+}
+*/
 tree_node* staticChecker::cdr(tree_node* s)
 {
 	if(!s or s->left == NULL and s->right == NULL)
 	{
 		//Undefined
-		cout << "ERROR : cdr failed, undefined input\n";
+		cout << "TYPE ERROR : cdr failed, input is not List(Nat)\n";
 		throw("");
 	}
 	else
 		return s->right;
 }
 
+tree_node* staticChecker::cdr_type_check(tree_node* s)
+{
+	if(!s or s->left == NULL and s->right == NULL)
+	{
+		if(s->value == "NIL")
+		{
+			tree_node* t = createNode("NIL",NULL,NULL);
+			return t;
+		}
+		//Undefined
+		cout << "TYPE ERROR : cdr failed, input is not List(Nat)\n";
+		throw("");
+	}
+	else if(isList(s))
+		return s->right;
+	else
+	{
+		cout << "TYPE ERROR : cdr failed, input is not List(Nat)\n";
+		throw("");
+	}
+}
+
 tree_node* staticChecker::cons(tree_node* s1, tree_node* s2)
 {
+	if(!isNumeric(s1) or !isList(s2))
+	{
+		cout << "TYPE ERROR : cons failed\n"; throw("");
+	}
+	//cout << "In cons\n"; cout << s1->value << "-" << s2->value << endl;
 	tree_node* temp = new tree_node();
 	temp->value = "DUMMY";
 	temp->left = s1;
 	temp->right = s2;
+	//this->printSExpression(temp);
+	//this->inorderPrint(temp);
+	cout << "Cons done\n";
 	return temp;
 }
 
 tree_node* staticChecker::atom(tree_node* s)
 {
-	cout << "In atom()\n";
+	//cout << "In atom()\n";
 	tree_node* temp = new tree_node();
 	if(!s){ cout << "ERROR : atom function failed, empty input\n"; throw(""); }
 	else if(s->left == NULL and s->right == NULL)
 	{
-		if(isNumeric(s) or s->value == "T" or s->value == "F")
+		if(s->value == "T" or s->value == "F" or isNumeric(s))
 		{
 			//Input is fine, do nothing.
 			temp = this->createNode("T",NULL,NULL);
 		}
+		else if(s->value =="NIL")
+		{
+			//Input is fine, do nothing.
+			temp = this->createNode("F",NULL,NULL);
+		}
 		else
 		{
-			cout << "TYPE ERROR : s : " << s->value << " in (ATOM s) is not recognized\n";
+			cout << "H\n";
+			cout << "TYPE ERROR : s :" << s->value <<  " in (ATOM s) is not recognized\n";
 			throw("");
 		}
 		//cout << "Atom\n";
@@ -99,12 +162,12 @@ tree_node* staticChecker::atom(tree_node* s)
 	{
 		//it is a List(Nat). Expression is valid or well typed.
 		//cout << "Not an atom\n";
-		temp = this->createNode("NIL",NULL,NULL);
+		temp = this->createNode("F",NULL,NULL);
 		//cout << temp->value;
 	}
 	else
 	{
-		cout << "TYPE ERROR : s : " << s->value << " in (ATOM s) is not recognized\n";
+		cout << "TYPE ERROR : s " << s->value << " in (ATOM s) is not recognized\n";
 		throw("");
 	}
 	return temp;
@@ -116,7 +179,7 @@ tree_node* staticChecker::INT(tree_node* s)
 	if(!s){ cout << "ERROR : int function failed, empty input\n"; throw(""); }
 	if(s->left == NULL and s->right == NULL)
 	{
-		if(isNumeric(s) or s->value == "T" or s->value == "F")
+		if(isNumeric(s) or s->value == "T" or s->value == "F" or s->value == "NIL")
 			temp = this->createNode("T",NULL,NULL);
 		else
 		{
@@ -127,7 +190,7 @@ tree_node* staticChecker::INT(tree_node* s)
 	else if(isList(s))
 	{
 		//cout << "Not an atom\n";
-		temp = this->createNode("NIL",NULL,NULL);
+		temp = this->createNode("F",NULL,NULL);
 		//cout << temp->value;
 	}
 	else
@@ -155,7 +218,7 @@ tree_node* staticChecker::null(tree_node* s)
 	}
 	else
 	{
-		cout << "TYPE ERROR : s : " << s->value << " in (NULL s) is not List(Nat)\n";
+		cout << "TYPE ERROR : s : " << " in (NULL s) is not List(Nat)\n";
 		throw("");
 	}
 	return temp;
@@ -169,18 +232,22 @@ tree_node* staticChecker::eq(tree_node* s1,tree_node* s2)
 		throw("");
 	if(s1->left != NULL and s1->right != NULL or s2->left != NULL and s2->right != NULL) //undefined
 	{
-		cout << "ERROR : eq failed,\n";
+		cout << "ERROR : eq failed,input is not nat\n";
 		throw("");
 	}
 	else
 	{
+		if(!isNumeric(s1) or !isNumeric(s2))
+		{
+			cout << "TYPE ERROR : EQ failed, input is not nat\n"; throw("");
+		}
 		if(s1->value == s2->value)
 		{	
 			temp = this->createNode("T",NULL,NULL); 
 			//cout << "s1 and s2 are equal\n";
 		}
 		else
-			temp = this->createNode("NIL",NULL,NULL);
+			temp = this->createNode("F",NULL,NULL);
 	}
 	return temp;
 }
@@ -189,7 +256,7 @@ tree_node* staticChecker::plus(tree_node* s1, tree_node* s2)
 {
 	//cout << "In plus\n";
 	tree_node* temp = new tree_node();
-	if(!s1 or !s2){cout << "ERROR: Plus failed, s1 or s2 is empty"; throw("");}
+	if(!s1 or !s2){cout << "TYPE ERROR: Plus failed, s1 or s2 is empty"; throw("");}
 	//if(this->length(s1) > 1 or this->length(s2) > 2) //undefined
 	//	throw("");
 	if(!isNumeric(s1) or !isNumeric(s2)){cout << "ERROR: Plus failed " << s1->value << " or " << s2->value << " is not numeric\n"; throw("");}
@@ -246,7 +313,7 @@ tree_node* staticChecker::less(tree_node* s1,tree_node* s2)
 		throw("");
 	//if(this->length(s1) > 1 or this->length(s2) > 2) //undefined
 	//	throw("");
-	if(!isNumeric(s1) or !isNumeric(s2)){cout << "ERROR: less failed " << s1->value << " or " << s2->value << " is not numeric\n"; throw("");}
+	if(!isNumeric(s1) or !isNumeric(s2)){cout << "TYPE ERROR: less failed " << s1->value << " or " << s2->value << " is not numeric\n"; throw("");}
 	else
 	{
 		if(atoi(s1->value.c_str()) < atoi(s2->value.c_str()))
@@ -277,7 +344,7 @@ tree_node* staticChecker::greater(tree_node* s1,tree_node* s2)
 
 tree_node* staticChecker::eval(tree_node* s)
 {
-	cout << "In eval\n";
+	//cout << "In eval\n";
 	string art[] = {"PLUS","LESS"};
 	string un[] = {"ATOM", "INT","NULL"};
 	string cc[] = {"CAR","CDR"};
@@ -302,10 +369,11 @@ tree_node* staticChecker::eval(tree_node* s)
 	else if(s->value == "NIL")
 		return s;
 	else if((s->value == "T" or s->value == "F") and this->length(s) == 1)
-	{ 	cout << "Found T\n";	return s; }
+	{ 	cout << "";	return s; }
 	else if(s->left == NULL and s->right == NULL){ cout << "TYPE ERROR: " << s->value << " not recognized\n"; throw("");}
 	
 	string car_value = this->car(s)->value;
+	//string car_value = s->left->value;
 	//cout << "car_value : " << car_value << "\n";
 	if(this->in_array(car_value,arithmetic))
 	{
@@ -319,12 +387,12 @@ tree_node* staticChecker::eval(tree_node* s)
 			cout << "TYPE ERROR : " << this->eval(s1)->value << " or " << this->eval(s2)->value << " not numeric, cannot perform " << car_value << " operation\n"; 
 			throw("");
 		}
-     	/*if(car_value == "PLUS"){ temp = plus(this->eval(s1),this->eval(s2)); }
+     	if(car_value == "PLUS"){ temp = plus(this->eval(s1),this->eval(s2)); }
      	else if(car_value == "MINUS"){temp = minus(this->eval(s1),this->eval(s2)); }
       	else if(car_value == "TIMES"){temp = times(this->eval(s1),this->eval(s2)); }
       	else if(car_value == "LESS"){temp = less(this->eval(s1),this->eval(s2)); }
       	else if(car_value == "GREATER"){temp = greater(this->eval(s1),this->eval(s2)); }
-      	else{cout << " ERROR : Could not map input to the right function\n"; throw("");}*/
+      	else{cout << " ERROR : Could not map input to the right function\n"; throw("");}
    					
 	}
 	else if(this->in_array(car_value,unary))
@@ -343,12 +411,11 @@ tree_node* staticChecker::eval(tree_node* s)
 		tree_node* s1 = this->car(this->cdr(s));
 		if(this->atom(this->eval(s1))->value == "T")
 		{
-			cout << "ERROR : Atom found after performing eval, cannot perform " << car_value << " on ";
-			this->printSExpression(s1); cout << " in "; this->printSExpression(s); cout << endl;  
+			cout << "TYPE ERROR : Atom found, cannot perform " << car_value; cout << endl;  
 			throw("");
 		}
      	if(car_value == "CAR") {temp = car(this->eval(s1));}
-     	else if(car_value == "CDR") {temp = cdr(this->eval(s1));}
+     	else if(car_value == "CDR") {temp = cdr_type_check(this->eval(s1));}
      	else{cout << "ERROR : Could not map input to the right function\n"; throw("");}    	
 	}
 	else if(car_value == "EQ")
@@ -400,6 +467,7 @@ tree_node* staticChecker::eval(tree_node* s)
 	else
 	{
 		cout << "ERROR: car(s) : " << car_value << " cannot be mapped to valid operation\n";
+		//this->printSExpression(s);
 		throw("");
 	}
 	//cout << "eval done\n";
@@ -500,26 +568,96 @@ tree_node* staticChecker::COND_eval(tree_node* s)
 {
 	//s includes the COND node
 	tree_node* temp = s;
+	int flag = 0;
+	tree_node* result;
+	string type;
 	temp = this->cdr(temp);
-	while(temp->left != NULL)
+	if(length(temp) < 1)
 	{
-		if(this->eval(this->car(this->car(temp)))->value != "NIL")
-		{
-			//cout << "True COndition found\n";
-			return this->eval(this->car(this->cdr(this->car(temp))));
-		}
-		else
-		{
-			//cout << "False COndition found\n";
-			temp = this->cdr(temp);
-		}
-	}
-	if(temp->left == NULL)
-	{
-		cout << "ERROR : None of the bi's are T in COND\n";
+		cout << "TYPE ERROR : COND failed, number of inputs should be >= 1\n";
 		throw("");
 	}
+	int i = 0;
+	while(temp->left != NULL and i <= length(temp))
+	{
+		//cout << i << endl;
+		tree_node* e = this->car(this->cdr(this->car(temp)));
+		if(i == 0)
+		{
+			type = this->getType(e); 
+			//cout << "Type: " << type << "\n";
+		}
+		if(i > 0)
+		{
+			string ty = this->getType(e);
+			//cout << "Type: " << ty<< "\n";
+			if(ty != type)
+			{
+				cout << "TYPE ERROR : COND failed, types in COND are not same\n"; throw("");
+			}
+		}
+		tree_node * e1 = this->car(this->car(temp));
+		if(this->getType(e1) != "bool")
+		{
+			cout << "TYPE ERROR : COND failed, one of the bi is not boolean\n";
+			throw("");
+		}
+		if(this->eval(this->car(this->car(temp)))->value != "F")
+		{
+			//cout << "True COndition found\n";
+			if(flag == 0)
+			{
+				result = this->eval(this->car(this->cdr(this->car(temp))));
+				flag = 1;
+			}
+		}
+			//cout << "False COndition found\n";
+		temp = this->cdr(temp);
+		i++;
+	}
+	if(flag == 0)
+	{
+		string y = getValueForType(type);
+		result = createNode(y,NULL,NULL);
+		//cout << result->value << endl;
+		//cout << "ERROR : None of the bi's are T in COND\n";
+		//throw("");
+	}
+	return result;
 }
+
+string getValueForType(string type)
+{
+	string temp;
+	if(type == "bool")
+		temp = "T";
+	else if(type == "Nat")
+		temp = 1;
+	else if(type == "List(Nat)")
+		temp = "NIL";
+	return temp;
+}
+
+string staticChecker::getType(tree_node* s)
+{
+	tree_node* result = this->eval(s);
+	string type;
+	//cout << "In getType : " << result->value <<endl;
+	if(isNumeric(result))
+	{
+		type = "Nat";
+	}
+	else if(isList(s))
+	{
+		type = "List(Nat)";
+	}
+	else if(result->value == "T" or result->value == "F")
+	{
+		type = "bool";
+	}
+	return type;
+}
+
 
 vector<string> staticChecker::getFormalParam(string F)
 {
@@ -767,8 +905,25 @@ bool staticChecker::isList(tree_node* s)
 		if(!isNumeric(this->car(temp)))
 		{
 			cout << "TYPE ERROR : Found a list which is not a list of numbers (i.e List(Nat))\n";
+			//this->inorderPrint(s);
 			throw("");
 		}
+		temp = temp->right;
+	}
+	if(temp->right == NULL and temp->left == NULL and temp->value == "NIL")
+		return true;
+	else
+		return false;
+}
+
+bool staticChecker::isList1(tree_node* s)
+{
+	//s is a list if and only if the right most leaf node is a special literal atom NIL
+	tree_node* temp = s;
+	if(!temp)
+		return false;
+	while(temp->right != NULL and temp->left != NULL)
+	{
 		temp = temp->right;
 	}
 	if(temp->right == NULL and temp->left == NULL and temp->value == "NIL")
@@ -797,7 +952,7 @@ bool staticChecker::allListOfLengthTwo(tree_node* s)
 	while(temp->left != NULL)
 	{
 		//cout << length(car(temp)) << "\n";
-		if(isList(this->car(temp)) and length(car(temp)) == 2)
+		if(isList1(this->car(temp)) and length(car(temp)) == 2)
 		{
 			temp = this->cdr(temp);
 		}

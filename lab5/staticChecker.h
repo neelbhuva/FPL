@@ -27,6 +27,7 @@ tree_node* getFuncBody(string);
 bool inalist(string,map<string,tree_node*>);
 tree_node* getFormalParamValue(string,map<string,tree_node*>);
 void printlast(tree_node*);
+string getValueForType(string);
 //extern vector<struct dlist*> dl;
 
 class staticChecker{
@@ -43,6 +44,7 @@ class staticChecker{
 		int length(tree_node*);
 		tree_node* car(tree_node* s);
 		tree_node* cdr(tree_node* s);
+		tree_node* cdr_type_check(tree_node* s);
 		tree_node* cons(tree_node* s1, tree_node* s2);
 		tree_node* atom(tree_node* s);
 		tree_node* INT(tree_node* s);
@@ -59,6 +61,7 @@ class staticChecker{
 		bool in_array(const string&, const vector<string>&);
 		void printSExpression(tree_node*);
 		bool isList(tree_node*);
+		bool isList1(tree_node*);
 		void inorderPrint(tree_node*);
 		bool allListOfLengthTwo(tree_node*);
 		tree_node* COND_eval(tree_node*);
@@ -73,6 +76,7 @@ class staticChecker{
 		tree_node* apply(string,tree_node*,map<string,tree_node*>);
 		tree_node* evlist(tree_node*,map<string,tree_node*>);
 		map<string,tree_node*> addpairs(vector<string> formal_param, tree_node* actual_values, map<string,tree_node*> alist);
+		string getType(tree_node*);
 };
 
 

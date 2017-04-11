@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <sstream>
 #include <algorithm>
-#include "interpreter.h"
+#include "emptyListChecker.h"
 #include <vector>
 #include "common.h"
 #include <map>
@@ -16,15 +16,15 @@
 using namespace std;
 
 vector<struct dlist> dl;
-//struct dlist* Interpreter::dl[100];
-//int Interpreter::i = 0;
-//vector<struct dlist*> Interpreter::dl = new vector<struct dlist*>[100];
-Interpreter::Interpreter()
+//struct dlist* emptyListChecker::dl[100];
+//int emptyListChecker::i = 0;
+//vector<struct dlist*> emptyListChecker::dl = new vector<struct dlist*>[100];
+emptyListChecker::emptyListChecker()
 {
 	this->flag = 0;
 }
 
-int Interpreter::length(tree_node* s)
+int emptyListChecker::length(tree_node* s)
 {
 	//cout << "In length\n";
 	if(!s)
@@ -36,7 +36,7 @@ int Interpreter::length(tree_node* s)
 	return 1+length(s->right);
 }
 
-tree_node* Interpreter::car(tree_node* s)
+tree_node* emptyListChecker::car(tree_node* s)
 {
 	if(!s or s->left == NULL and s->right == NULL)
 	{
@@ -48,7 +48,7 @@ tree_node* Interpreter::car(tree_node* s)
 		return s->left;
 }
 
-tree_node* Interpreter::cdr(tree_node* s)
+tree_node* emptyListChecker::cdr(tree_node* s)
 {
 	if(!s or s->left == NULL and s->right == NULL)
 	{
@@ -60,7 +60,7 @@ tree_node* Interpreter::cdr(tree_node* s)
 		return s->right;
 }
 
-tree_node* Interpreter::cons(tree_node* s1, tree_node* s2)
+tree_node* emptyListChecker::cons(tree_node* s1, tree_node* s2)
 {
 	tree_node* temp = new tree_node();
 	temp->value = "DUMMY";
@@ -69,7 +69,7 @@ tree_node* Interpreter::cons(tree_node* s1, tree_node* s2)
 	return temp;
 }
 
-tree_node* Interpreter::atom(tree_node* s)
+tree_node* emptyListChecker::atom(tree_node* s)
 {
 	//cout << "In atom()";
 	tree_node* temp = new tree_node();
@@ -88,7 +88,7 @@ tree_node* Interpreter::atom(tree_node* s)
 	return temp;
 }
 
-tree_node* Interpreter::INT(tree_node* s)
+tree_node* emptyListChecker::INT(tree_node* s)
 {
 	tree_node* temp = new tree_node();
 	if(!s){ cout << "ERROR : int function failed, empty input\n"; throw(""); }
@@ -108,7 +108,7 @@ tree_node* Interpreter::INT(tree_node* s)
 	return temp;
 }
 
-tree_node* Interpreter::null(tree_node* s)
+tree_node* emptyListChecker::null(tree_node* s)
 {
 	//cout << "In null\n";
 	tree_node* temp = new tree_node();
@@ -126,7 +126,7 @@ tree_node* Interpreter::null(tree_node* s)
 }
 
 
-tree_node* Interpreter::eq(tree_node* s1,tree_node* s2)
+tree_node* emptyListChecker::eq(tree_node* s1,tree_node* s2)
 {
 	tree_node* temp = new tree_node();
 	if(!s1 or !s2)
@@ -149,7 +149,7 @@ tree_node* Interpreter::eq(tree_node* s1,tree_node* s2)
 	return temp;
 }
 
-tree_node* Interpreter::plus(tree_node* s1, tree_node* s2)
+tree_node* emptyListChecker::plus(tree_node* s1, tree_node* s2)
 {
 	//cout << "In plus\n";
 	tree_node* temp = new tree_node();
@@ -167,7 +167,7 @@ tree_node* Interpreter::plus(tree_node* s1, tree_node* s2)
 	return temp;
 }
 
-tree_node* Interpreter::minus(tree_node* s1, tree_node* s2)
+tree_node* emptyListChecker::minus(tree_node* s1, tree_node* s2)
 {
 	tree_node* temp = new tree_node();
 	if(!s1 or !s2)
@@ -185,7 +185,7 @@ tree_node* Interpreter::minus(tree_node* s1, tree_node* s2)
 	return temp;
 }
 
-tree_node* Interpreter::times(tree_node* s1, tree_node* s2)
+tree_node* emptyListChecker::times(tree_node* s1, tree_node* s2)
 {
 	tree_node* temp = new tree_node();
 	if(!s1 or !s2)
@@ -203,7 +203,7 @@ tree_node* Interpreter::times(tree_node* s1, tree_node* s2)
 	return temp;
 }
 
-tree_node* Interpreter::less(tree_node* s1,tree_node* s2)
+tree_node* emptyListChecker::less(tree_node* s1,tree_node* s2)
 {
 	tree_node* temp = new tree_node();
 	if(!s1 or !s2)
@@ -221,7 +221,7 @@ tree_node* Interpreter::less(tree_node* s1,tree_node* s2)
 	return temp;
 }
 
-tree_node* Interpreter::greater(tree_node* s1,tree_node* s2)
+tree_node* emptyListChecker::greater(tree_node* s1,tree_node* s2)
 {
 	tree_node* temp = new tree_node();
 	if(!s1 or !s2)
@@ -239,7 +239,7 @@ tree_node* Interpreter::greater(tree_node* s1,tree_node* s2)
 	return temp;
 }
 
-tree_node* Interpreter::eval(tree_node* s,map<string,tree_node*> alist)
+tree_node* emptyListChecker::eval(tree_node* s,map<string,tree_node*> alist)
 {
 	//cout << "In eval\n";
 	string art[] = {"PLUS", "MINUS","TIMES","LESS","GREATER"};
@@ -371,7 +371,7 @@ tree_node* Interpreter::eval(tree_node* s,map<string,tree_node*> alist)
 		tree_node* temp1 = this->cdr(s);
 		temp = this->validate_defun_expression(temp1,arithmetic,unary,carcdr,other);			
 		//template<string,T> struct pair a[];
-		//myinterpreter(s,a,d);
+		//myemptyListChecker(s,a,d);
 	}
 	else if (true)
 	{
@@ -423,7 +423,7 @@ void printlast(tree_node* s)
 }
 
 
-tree_node* Interpreter::evlist(tree_node* s,map<string,tree_node*> alist)
+tree_node* emptyListChecker::evlist(tree_node* s,map<string,tree_node*> alist)
 {
 	tree_node* temp = new tree_node();
 	if(this->null(s)->value == "T")
@@ -465,7 +465,7 @@ bool inalist(string param, map<string,tree_node*> alist)
 	return false;
 }
 
-tree_node* Interpreter::apply(string F,tree_node* s, map<string,tree_node*> alist)
+tree_node* emptyListChecker::apply(string F,tree_node* s, map<string,tree_node*> alist)
 {
 	//s is actual parameter list.
 	//cout << "In apply : " << F << " " << alist.empty() <<  " ";
@@ -474,7 +474,7 @@ tree_node* Interpreter::apply(string F,tree_node* s, map<string,tree_node*> alis
 	return this->eval(func_body,this->addpairs(getFormalParam(F),s,alist));
 }
 
-map<string,tree_node*> Interpreter::addpairs(vector<string> formal_param, tree_node* actual_values, map<string,tree_node*> alist)
+map<string,tree_node*> emptyListChecker::addpairs(vector<string> formal_param, tree_node* actual_values, map<string,tree_node*> alist)
 {
 	tree_node* temp = actual_values;
 	for(int i = 0; i < formal_param.size(); i++)
@@ -503,7 +503,7 @@ void printmap(map<string,tree_node*> alist)
     cout << "\n";
 }
 
-tree_node* Interpreter::COND_eval(tree_node* s,map<string,tree_node*> alist)
+tree_node* emptyListChecker::COND_eval(tree_node* s,map<string,tree_node*> alist)
 {
 	//s includes the COND node
 	tree_node* temp = s;
@@ -529,7 +529,7 @@ tree_node* Interpreter::COND_eval(tree_node* s,map<string,tree_node*> alist)
 }
 
 //evalute actual parameter expressions and bind the values with formal parameters.
-map<string,tree_node*> Interpreter::evaluateActualList(string F,tree_node* s)
+map<string,tree_node*> emptyListChecker::evaluateActualList(string F,tree_node* s)
 {
 	//s is list of actual param, does not have F
 	//cout << "Evaluating actual parameters...\n";
@@ -548,7 +548,7 @@ map<string,tree_node*> Interpreter::evaluateActualList(string F,tree_node* s)
 	return alist;
 }
 
-vector<string> Interpreter::getFormalParam(string F)
+vector<string> emptyListChecker::getFormalParam(string F)
 {
 	for(int i = 0; i < dl.size(); i++)
 	{
@@ -557,7 +557,7 @@ vector<string> Interpreter::getFormalParam(string F)
 	}
 }
 
-void Interpreter::validateFuncCall(tree_node* s,string F)
+void emptyListChecker::validateFuncCall(tree_node* s,string F)
 {
 	//cout << "Validating Function call...\n";
 	int j;
@@ -577,7 +577,7 @@ void Interpreter::validateFuncCall(tree_node* s,string F)
 	}
 }
 
-tree_node* Interpreter::validate_defun_expression(tree_node* s, vector<string> arithmetic,vector<string> un,vector<string> cc,vector<string> other)
+tree_node* emptyListChecker::validate_defun_expression(tree_node* s, vector<string> arithmetic,vector<string> un,vector<string> cc,vector<string> other)
 {
 	//cout << "In validate_defun_expression\n";
 	//s is tree without DEFUN node
@@ -615,10 +615,10 @@ tree_node* Interpreter::validate_defun_expression(tree_node* s, vector<string> a
 
 	struct dlist * temp = &d_list;
 	dl.push_back(d_list);
-	//Interpreter::dl[Interpreter::i] = new struct dlist;
-	//Interpreter::dl[Interpreter::i] = &d_list;
-	//Interpreter::i++;
-	//cout << Interpreter::i << "\n";
+	//emptyListChecker::dl[emptyListChecker::i] = new struct dlist;
+	//emptyListChecker::dl[emptyListChecker::i] = &d_list;
+	//emptyListChecker::i++;
+	//cout << emptyListChecker::i << "\n";
 	//cout << d_list.func_name;
 	tree_node* temp1 = new tree_node();
 	temp1->value = d_list.func_name;
@@ -629,7 +629,7 @@ tree_node* Interpreter::validate_defun_expression(tree_node* s, vector<string> a
 	return temp1;
 }
 
-void Interpreter::printdlist(tree_node* s2)
+void emptyListChecker::printdlist(tree_node* s2)
 {
 	//cout << dl.size();
 	cout << "--------------dlist------------\n";
@@ -646,7 +646,7 @@ void Interpreter::printdlist(tree_node* s2)
 	cout << "--------------dlist end------------\n";
 }
 
-vector<string> Interpreter::isListOfLiteralAtoms(tree_node* s1,vector<string> arithmetic,vector<string> unary,vector<string> carcdr,vector<string> other)
+vector<string> emptyListChecker::isListOfLiteralAtoms(tree_node* s1,vector<string> arithmetic,vector<string> unary,vector<string> carcdr,vector<string> other)
 {
 	//cout << "In isListOfLiteralAtoms\n";
 
@@ -681,7 +681,7 @@ vector<string> Interpreter::isListOfLiteralAtoms(tree_node* s1,vector<string> ar
 	return formal_param;
 }
 
-bool Interpreter::isFuncNameInDlist(string F)
+bool emptyListChecker::isFuncNameInDlist(string F)
 {
 	//cout << "Looking for function in dlist...\n";
 	for(int i = 0; i < dl.size(); i++)
@@ -692,7 +692,7 @@ bool Interpreter::isFuncNameInDlist(string F)
 	return false;
 }
 
-void Interpreter::printSExpression(tree_node* s)
+void emptyListChecker::printSExpression(tree_node* s)
 {
 	//cout << "In printSExpression...\n";
 	if(this->atom(s)->value == "T")
@@ -727,7 +727,7 @@ void Interpreter::printSExpression(tree_node* s)
 	}
 }
 
-tree_node* Interpreter::createNode(string value, tree_node* left, tree_node* right)
+tree_node* emptyListChecker::createNode(string value, tree_node* left, tree_node* right)
 {
 	//cout << "Creating a new node : " << value << "\n";
 	tree_node* temp = new tree_node();
@@ -739,7 +739,7 @@ tree_node* Interpreter::createNode(string value, tree_node* left, tree_node* rig
 	return temp;
 }
 
-bool Interpreter::isNumeric(tree_node* s)
+bool emptyListChecker::isNumeric(tree_node* s)
 {
 	//cout << "In isNumeric\n";
 	string value = s->value; int i = 0;
@@ -778,12 +778,12 @@ bool Interpreter::isNumeric(tree_node* s)
 	}
 }
 
-bool Interpreter::in_array(const std::string &value, const std::vector<string> &array)
+bool emptyListChecker::in_array(const std::string &value, const std::vector<string> &array)
 {
     return std::find(array.begin(), array.end(), value) != array.end();
 }
 
-bool Interpreter::isList(tree_node* s)
+bool emptyListChecker::isList(tree_node* s)
 {
 	//s is a list if and only if the right most leaf node is a special literal atom NIL
 	tree_node* temp = s;
@@ -799,7 +799,7 @@ bool Interpreter::isList(tree_node* s)
 		return false;
 }
 
-void Interpreter::inorderPrint(tree_node* node)
+void emptyListChecker::inorderPrint(tree_node* node)
 {
 	if(node)
 	{
@@ -809,7 +809,7 @@ void Interpreter::inorderPrint(tree_node* node)
 	}
 }
 
-bool Interpreter::allListOfLengthTwo(tree_node* s)
+bool emptyListChecker::allListOfLengthTwo(tree_node* s)
 {
 	//input s has COND as car(s), check for the rest of the tree whether si are list and length == 2 
 	if(this->length(s) < 2)

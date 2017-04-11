@@ -124,7 +124,7 @@ pair<string,string> Scanner::getNextToken()
 			
 		}
 		string a(literalAtom.begin(),literalAtom.end());
-		cout << a << "\n";
+		//cout << a << "\n";
 		
 		token.second = a;
 	}

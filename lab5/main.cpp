@@ -133,7 +133,7 @@ void ParseStart(Scanner* scanner)
 	    	throw("Parser Error");
 	    }
 	    bt.Print(bt.root);
-	   cout << "\nPrinting done...\n";
+	    cout << "\nPrinting done...\n";
 	    try
 	    {
 	    	staticChecker ip;
@@ -160,6 +160,15 @@ void ParseStart(Scanner* scanner)
 	    	//ip.printSExpression(result_tree);
 	    	//cout << "\n";
 	    	//cout << dl[0].func_name << "\n";
+	    }
+	    catch(...)
+	    {
+	    	return;
+	    }
+	    try
+	    {
+	    	emptyListChecker elc;
+	    	tree_node* elc_result = elc.eval(bt.root);
 	    }
 	    catch(...)
 	    {
