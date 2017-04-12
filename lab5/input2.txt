@@ -1,8 +1,12 @@
 (PLUS 7 6)
 (LESS 8 9)
 
-
-(CAR ())
-(CAR NIL)
-
+(CONS 6 ())
+(CONS 6 NIL)
+(CDR (7))
+(CDR (CONS (PLUS 6 7) (7 8)))
 (CDR ())
+
+
+(CAR NIL)
+(CAR ())

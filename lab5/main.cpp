@@ -169,7 +169,7 @@ void ParseStart(Scanner* scanner)
 	    try
 	    {
 	    	emptyListChecker elc;
-	    	//tree_node* elc_result = elc.eval(bt.root);
+	    	tree_node* elc_result = elc.eval(bt.root);
 	    }
 	    catch(...)
 	    {

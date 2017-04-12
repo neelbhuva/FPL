@@ -22,6 +22,7 @@ using namespace std;
 emptyListChecker::emptyListChecker()
 {
 	this->flag = 0;
+	this->flag1 = 0;
 }
 
 int emptyListChecker::length(tree_node* s)
@@ -46,14 +47,15 @@ tree_node* emptyListChecker::car(tree_node* s)
 			throw("");
 		}
 		//empty binary tree.
-		cout << "ERROR : car failed, undefined input\n";
-		throw("");
+		//cout << "Empty List Error : car failed, undefined input\n";
+		//throw("");
 	}
 	else if(length(s) > 0)
 		return s->left;
 	else
 	{
-		cout << "EMPTY LIST ERROR : car failed for List[>=0]\n"; throw("");
+		cout << "EMPTY LIST ERROR : car failed for List[>=0]\n"; 
+		throw("");
 	}
 }
 
@@ -61,9 +63,14 @@ tree_node* emptyListChecker::cdr(tree_node* s)
 {
 	if(!s or s->left == NULL and s->right == NULL)
 	{
+		if(s->value == "NIL")
+		{
+			cout << "EMPTY LIST ERROR : cdr failed for List[>=0]\n";
+			throw("");
+		}
 		//Undefined
-		cout << "ERROR : cdr failed, undefined input\n";
-		throw("");
+		//cout << "Empty List Error : cdr failed, undefined input\n";
+		//throw("");
 	}
 	else
 		return s->right;
@@ -82,7 +89,7 @@ tree_node* emptyListChecker::atom(tree_node* s)
 {
 	//cout << "In atom()";
 	tree_node* temp = new tree_node();
-	if(!s){ cout << "ERROR : atom function failed, empty input\n"; throw(""); }
+	if(!s){ cout << "Empty List Error : atom function failed, empty input\n"; throw(""); }
 	else if(s->left == NULL and s->right == NULL)
 	{
 		if(s->value == "NIL")
@@ -107,7 +114,7 @@ tree_node* emptyListChecker::atom(tree_node* s)
 tree_node* emptyListChecker::INT(tree_node* s)
 {
 	tree_node* temp = new tree_node();
-	if(!s){ cout << "ERROR : int function failed, empty input\n"; throw(""); }
+	if(!s){ cout << "Empty List Error : int function failed, empty input\n"; throw(""); }
 	if(s->left == NULL and s->right == NULL)
 	{
 		if(isNumeric(s))
@@ -149,7 +156,7 @@ tree_node* emptyListChecker::eq(tree_node* s1,tree_node* s2)
 		throw("");
 	if(s1->left != NULL and s1->right != NULL or s2->left != NULL and s2->right != NULL) //undefined
 	{
-		cout << "ERROR : eq failed,\n";
+		cout << "Empty List Error : eq failed,\n";
 		throw("");
 	}
 	else
@@ -160,7 +167,7 @@ tree_node* emptyListChecker::eq(tree_node* s1,tree_node* s2)
 			//cout << "s1 and s2 are equal\n";
 		}
 		else
-			temp = this->createNode("NIL",NULL,NULL);
+			temp = this->createNode("F",NULL,NULL);
 	}
 	return temp;
 }
@@ -169,10 +176,10 @@ tree_node* emptyListChecker::plus(tree_node* s1, tree_node* s2)
 {
 	//cout << "In plus\n";
 	tree_node* temp = new tree_node();
-	if(!s1 or !s2){cout << "ERROR: Plus failed, s1 or s2 is empty"; throw("");}
+	if(!s1 or !s2){cout << "Empty List Error: Plus failed, s1 or s2 is empty"; throw("");}
 	//if(this->length(s1) > 1 or this->length(s2) > 2) //undefined
 	//	throw("");
-	if(!isNumeric(s1) or !isNumeric(s2)){cout << "ERROR: Plus failed " << s1->value << " or " << s2->value << " is not numeric\n"; throw("");}
+	if(!isNumeric(s1) or !isNumeric(s2)){cout << "Empty List Error: Plus failed " << s1->value << " or " << s2->value << " is not numeric\n"; throw("");}
 	else
 	{
 		int s = atoi(s1->value.c_str()) + atoi(s2->value.c_str());
@@ -190,7 +197,7 @@ tree_node* emptyListChecker::minus(tree_node* s1, tree_node* s2)
 		throw("");
 	//if(this->length(s1) > 1 or this->length(s2) > 2) //undefined
 	//	throw("");
-	if(!isNumeric(s1) or !isNumeric(s2)){cout << "ERROR: minus failed " << s1->value << " or " << s2->value << " is not numeric\n"; throw("");}
+	if(!isNumeric(s1) or !isNumeric(s2)){cout << "Empty List Error: minus failed " << s1->value << " or " << s2->value << " is not numeric\n"; throw("");}
 	else
 	{
 		int s = atoi(s1->value.c_str()) - atoi(s2->value.c_str());
@@ -208,7 +215,7 @@ tree_node* emptyListChecker::times(tree_node* s1, tree_node* s2)
 		throw("");
 	//if(this->length(s1) > 1 or this->length(s2) > 2) //undefined
 	//	throw("");
-	if(!isNumeric(s1) or !isNumeric(s2)){cout << "ERROR: times failed " << s1->value << " or " << s2->value << " is not numeric\n"; throw("");}
+	if(!isNumeric(s1) or !isNumeric(s2)){cout << "Empty List Error: times failed " << s1->value << " or " << s2->value << " is not numeric\n"; throw("");}
 	else
 	{
 		int s = atoi(s1->value.c_str()) * atoi(s2->value.c_str());
@@ -226,13 +233,13 @@ tree_node* emptyListChecker::less(tree_node* s1,tree_node* s2)
 		throw("");
 	//if(this->length(s1) > 1 or this->length(s2) > 2) //undefined
 	//	throw("");
-	if(!isNumeric(s1) or !isNumeric(s2)){cout << "ERROR: less failed " << s1->value << " or " << s2->value << " is not numeric\n"; throw("");}
+	if(!isNumeric(s1) or !isNumeric(s2)){cout << "Empty List Error: less failed " << s1->value << " or " << s2->value << " is not numeric\n"; throw("");}
 	else
 	{
 		if(atoi(s1->value.c_str()) < atoi(s2->value.c_str()))
 			temp = this->createNode("T",NULL,NULL);
 		else
-			temp = this->createNode("NIL",NULL,NULL);
+			temp = this->createNode("F",NULL,NULL);
 	}
 	return temp;
 }
@@ -244,7 +251,7 @@ tree_node* emptyListChecker::greater(tree_node* s1,tree_node* s2)
 		throw("");
 	//if(this->length(s1) > 1 or this->length(s2) > 2) //undefined
 	//	throw("");
-	if(!isNumeric(s1) or !isNumeric(s2)){cout << "ERROR: greater failed " << s1->value << " or " << s2->value << " is not numeric\n"; throw("");}
+	if(!isNumeric(s1) or !isNumeric(s2)){cout << "Empty List Error: greater failed " << s1->value << " or " << s2->value << " is not numeric\n"; throw("");}
 	else
 	{
 		if(atoi(s1->value.c_str()) > atoi(s2->value.c_str()))
@@ -278,23 +285,29 @@ tree_node* emptyListChecker::eval(tree_node* s,map<string,tree_node*> alist)
 		return s;
 	}
 	else if(s->value == "NIL")//List[>=0]
-		return s;
+	{	flag1 = 1; return s;}
 	else if((s->value == "T" or s->value == "F") and this->length(s) == 1)
-		return s;
+	{	flag1 = 1; return s;}
 	else if(s->left == NULL and s->right == NULL){ cout << "EMPTY LIST ERROR: eval failed, " << s->value << " not recognized\n"; throw("");}
 	
+	if(isList2(s) and flag1 == 1)
+	{
+		return s;
+	}
+
 	string car_value = this->car(s)->value;
 	//cout << "car_value : " << car_value << "\n";
 	if(this->in_array(car_value,arithmetic))
 	{
+		flag1 = 1;
 		//cout << "Arithmetic\n";
-		if(this->length(s) != 3){ cout << "ERROR : Length(s) not equal to 3 for " << car_value << "\n"; throw("");}
+		if(this->length(s) != 3){ cout << "Empty List Error : Length(s) not equal to 3 for " << car_value << "\n"; throw("");}
 		tree_node* s1 = this->car(this->cdr(s));
 		tree_node* s2 = this->car(this->cdr(this->cdr(s)));
 		//cout << car_value << " " << s1->value << " " << s2->value << "\n";
 		if(!isNumeric(this->eval(s1,alist)) or !isNumeric(this->eval(s2,alist)))
 		{	
-			cout << "ERROR : " << this->eval(s1,alist)->value << " or " << this->eval(s2,alist)->value << " not numeric, cannot perform " << car_value << " operation\n"; 
+			cout << "Empty List Error : " << this->eval(s1,alist)->value << " or " << this->eval(s2,alist)->value << " not numeric, cannot perform " << car_value << " operation\n"; 
 			throw("");
 		}
      	if(car_value == "PLUS"){ temp = plus(this->eval(s1,alist),this->eval(s2,alist)); }
@@ -307,60 +320,55 @@ tree_node* emptyListChecker::eval(tree_node* s,map<string,tree_node*> alist)
 	}
 	else if(this->in_array(car_value,unary))
 	{
-		if(this->length(s) != 2){ cout << "ERROR : Length(s) not equal to 2, cannot perform unary\n"; throw("");}
+		flag1 = 1;
+		if(this->length(s) != 2){ cout << "Empty List Error : Length(s) not equal to 2, cannot perform unary\n"; throw("");}
 		tree_node* s1 = this->car(this->cdr(s));
 		//cout << car_value << " " << s1->value << "\n";
      	if(car_value == "ATOM") {temp = atom(this->eval(s1,alist));}
 		else if(car_value == "INT") {temp = INT(this->eval(s1,alist));}      		
 		else if(car_value == "NULL") {temp = null(this->eval(s1,alist));}
-      	else{cout << "ERROR : Could not map input to the right function\n"; throw("");}
+      	else{cout << "Empty List Error : Could not map input to the right function\n"; throw("");}
 	}
 	else if(this->in_array(car_value,carcdr))
 	{
-		if(this->length(s) != 2){ cout << "ERROR : Length(s) not equal to 2,cannot perform "<< car_value << "\n"; throw("");}
+		flag1 = 1;
+		if(this->length(s) != 2){ cout << "Empty List Error : Length(s) not equal to 2,cannot perform "<< car_value << "\n"; throw("");}
 		tree_node* s1 = this->car(this->cdr(s));
 		if(this->atom(this->eval(s1,alist))->value == "T")
 		{
-			cout << "ERROR : Atom found after performing eval, cannot perform " << car_value << " on ";
+			cout << "Empty List Error : Atom found after performing eval, cannot perform " << car_value << " on ";
 			this->printSExpression(s1); cout << " in "; this->printSExpression(s); cout << endl;  
 			throw("");
 		}
      	if(car_value == "CAR") {temp = car(this->eval(s1,alist));}
      	else if(car_value == "CDR") {temp = cdr(this->eval(s1,alist));}
-     	else{cout << "ERROR : Could not map input to the right function\n"; throw("");}    	
+     	else{cout << "Empty List Error : Could not map input to the right function\n"; throw("");}    	
 	}
 	else if(car_value == "EQ")
 	{
-		if(this->length(s) != 3){ cout << "ERROR : Length(s) not equal to 3, cannot perform EQ\n"; throw("");}
+		flag1 = 1;
+		if(this->length(s) != 3){ cout << "Empty List Error : Length(s) not equal to 3, cannot perform EQ\n"; throw("");}
 		tree_node* s1 = this->car(this->cdr(s));
 		tree_node* s2 = this->car(this->cdr(this->cdr(s)));
 		//cout << car_value << " " << s1->value << " " << s2->value << "\n";
-		if(this->atom(this->eval(s1,alist))->value == "NIL" or this->atom(this->eval(s2,alist))->value == "NIL")
+		if(this->atom(this->eval(s1,alist))->value == "F" or this->atom(this->eval(s2,alist))->value == "F")
 		{
-			cout << "ERROR : Atom not found after performing eval, cannot perform " << car_value << "\n";
+			cout << "Empty List Error : Atom not found after performing eval, cannot perform " << car_value << "\n";
 			throw("");
 		}
 		temp = this->eq(this->eval(s1,alist),this->eval(s2,alist));
 	}
 	else if(car_value == "CONS")
 	{
-		if(this->length(s) != 3){ cout << "ERROR : Length(s) not equal to 3, cannot perform cons\n"; throw("");}
+		flag1 = 1;
+		if(this->length(s) != 3){ cout << "Empty List Error : Length(s) not equal to 3, cannot perform cons\n"; throw("");}
 		tree_node* s1 = this->car(this->cdr(s));
 		tree_node* s2 = this->car(this->cdr(this->cdr(s)));
 		temp = this->cons(this->eval(s1,alist),this->eval(s2,alist));
 	}
-	else if(car_value == "QUOTE")
-	{
-		//cout << "In Quote\n";
-		if(this->length(s) != 2){ cout << "ERROR : Length(s) not equal to 2,cannot do QUOTE\n"; throw("");}
-		//this->printSExpression(s);
-		temp = this->car(this->cdr(s));
-		//cout << this->length(temp);
-		//this->printSExpression(temp);
-		//printlast(temp);
-	}
 	else if(car_value == "COND")
 	{
+		flag1 = 1;
 		//check if any si is not a list or if it is a list then whether length == 2
 		if(allListOfLengthTwo(s))
 		{
@@ -370,15 +378,15 @@ tree_node* emptyListChecker::eval(tree_node* s,map<string,tree_node*> alist)
 		}
 		else
 		{
-			cout << "ERROR in COND : Some si in (COND s1 s2 ...sn) is not a list or has length != 2\n";
+			cout << "Empty List Error in COND : Some si in (COND s1 s2 ...sn) is not a list or has length != 2\n";
 			throw("");
 		}
 	}
-	else
+	/*else
 	{
-		cout << "ERROR: car(s) : " << car_value << " cannot be mapped to valid operation\n";
+		cout << "Empty List Error: car(s) : " << car_value << " cannot be mapped to valid operation\n";
 		throw("");
-	}
+	}*/
 	//cout << "eval done\n";
 	return temp;
 }
@@ -390,7 +398,7 @@ tree_node* emptyListChecker::COND_eval(tree_node* s,map<string,tree_node*> alist
 	temp = this->cdr(temp);
 	while(temp->left != NULL)
 	{
-		if(this->eval(this->car(this->car(temp)),alist)->value != "NIL")
+		if(this->eval(this->car(this->car(temp)),alist)->value != "F")
 		{
 			//cout << "True COndition found\n";
 			return this->eval(this->car(this->cdr(this->car(temp))),alist);
@@ -403,7 +411,7 @@ tree_node* emptyListChecker::COND_eval(tree_node* s,map<string,tree_node*> alist
 	}
 	if(temp->left == NULL)
 	{
-		cout << "ERROR : None of the bi's are T in COND\n";
+		cout << "Empty List Error : None of the bi's are T in COND\n";
 		throw("");
 	}
 }
@@ -421,12 +429,12 @@ vector<string> emptyListChecker::isListOfLiteralAtoms(tree_node* s1,vector<strin
 		//cout << "param : " << param << "\n"; 
 		if(this->in_array(param,arithmetic) || this->in_array(param,unary) || this->in_array(param,carcdr) || this->in_array(param,other))
 		{
-			cout << "ERROR : Formal parameter " << param << " cannot be the same as built in function name\n";
+			cout << "Empty List Error : Formal parameter " << param << " cannot be the same as built in function name\n";
 			throw("");
 		}
 		if(this->in_array(param,formal_param))
 		{
-			cout << "ERROR : Cannot repeat formal parameters in s1 (DEFUN F s1 s2)\n";
+			cout << "Empty List Error : Cannot repeat formal parameters in s1 (DEFUN F s1 s2)\n";
 			throw("");
 		}		
 		if(isupper(param[0]))
@@ -436,7 +444,7 @@ vector<string> emptyListChecker::isListOfLiteralAtoms(tree_node* s1,vector<strin
 		}
 		else
 		{
-			cout << "ERROR : Formal parameters is not a list of literal atoms\n";
+			cout << "Empty List Error : Formal parameters is not a list of literal atoms\n";
 			throw("");
 		}
 	}
@@ -560,6 +568,24 @@ bool emptyListChecker::isList(tree_node* s)
 	else
 		return false;
 }
+
+bool emptyListChecker::isList2(tree_node* s)
+{
+	//s is a list if and only if the right most leaf node is a special literal atom NIL
+	tree_node* temp = s;
+	if(!temp)
+		return false;
+	while(temp->right != NULL and temp->left != NULL)
+	{
+		if(!isNumeric(this->car(temp)))
+		{
+			return false;
+		}
+		temp = temp->right;
+	}
+	return true;
+}
+
 
 void emptyListChecker::inorderPrint(tree_node* node)
 {

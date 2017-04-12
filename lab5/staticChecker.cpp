@@ -22,6 +22,7 @@ vector<struct dlist> dl;
 staticChecker::staticChecker()
 {
 	this->flag = 0;
+	this->flag1 = 0;
 }
 
 int staticChecker::length(tree_node* s)
@@ -47,7 +48,7 @@ tree_node* staticChecker::car(tree_node* s)
 			return t;
 		}	
 		//empty binary tree.
-		cout << "ERROR : car failed, undefined input\n";
+		cout << "TYPE ERROR : car failed, undefined input\n";
 		throw("");
 	}
 	else
@@ -392,16 +393,21 @@ tree_node* staticChecker::eval(tree_node* s)
 		return s;
 	}
 	else if(s->value == "NIL")
-		return s;
+	{	flag1 = 1; return s; }
 	else if((s->value == "T" or s->value == "F") and this->length(s) == 1)
-	{ 	cout << "";	return s; }
+	{ 	cout << "";	flag1 = 1; return s; }
 	else if(s->left == NULL and s->right == NULL){ cout << "TYPE ERROR: " << s->value << " not recognized\n"; throw("");}
 	
+	if(isList2(s) and flag1 == 1)
+	{
+		return s;
+	}
 	string car_value = this->car(s)->value;
 	//string car_value = s->left->value;
 	//cout << "car_value : " << car_value << "\n";
 	if(this->in_array(car_value,arithmetic))
 	{
+		flag1 = 1;
 		//cout << "Arithmetic\n";
 		if(this->length(s) != 3){ cout << "TYPE ERROR : Length(s) not equal to 3 for " << car_value << "\n"; throw("");}
 		tree_node* s1 = this->car(this->cdr(s));
@@ -422,6 +428,7 @@ tree_node* staticChecker::eval(tree_node* s)
 	}
 	else if(this->in_array(car_value,unary))
 	{
+		flag1 = 1;
 		if(this->length(s) != 2){ cout << "TYPE ERROR : Length(s) not equal to 2, cannot perform unary\n"; throw("");}
 		tree_node* s1 = this->car(this->cdr(s));
 		//cout << car_value << " " << s1->value << "\n";
@@ -432,6 +439,7 @@ tree_node* staticChecker::eval(tree_node* s)
 	}
 	else if(this->in_array(car_value,carcdr))
 	{
+		flag1 = 1;
 		if(this->length(s) != 2){ cout << "ERROR : Length(s) not equal to 2,cannot perform "<< car_value << "\n"; throw("");}
 		tree_node* s1 = this->car(this->cdr(s));
 		if(this->atom(this->eval(s1))->value == "T")
@@ -445,6 +453,7 @@ tree_node* staticChecker::eval(tree_node* s)
 	}
 	else if(car_value == "EQ")
 	{
+		flag1 = 1;
 		if(this->length(s) != 3){ cout << "ERROR : Length(s) not equal to 3, cannot perform EQ\n"; throw("");}
 		tree_node* s1 = this->car(this->cdr(s));
 		tree_node* s2 = this->car(this->cdr(this->cdr(s)));
@@ -458,23 +467,15 @@ tree_node* staticChecker::eval(tree_node* s)
 	}
 	else if(car_value == "CONS")
 	{
+		flag1 = 1;
 		if(this->length(s) != 3){ cout << "ERROR : Length(s) not equal to 3, cannot perform cons\n"; throw("");}
 		tree_node* s1 = this->car(this->cdr(s));
 		tree_node* s2 = this->car(this->cdr(this->cdr(s)));
 		temp = this->cons(this->eval(s1),this->eval(s2));
 	}
-	else if(car_value == "QUOTE")
-	{
-		//cout << "In Quote\n";
-		if(this->length(s) != 2){ cout << "ERROR : Length(s) not equal to 2,cannot do QUOTE\n"; throw("");}
-		//this->printSExpression(s);
-		temp = this->car(this->cdr(s));
-		//cout << this->length(temp);
-		//this->printSExpression(temp);
-		//printlast(temp);
-	}
 	else if(car_value == "COND")
 	{
+		flag1 = 1;
 		//check if any si is not a list or if it is a list then whether length == 2
 		if(allListOfLengthTwo(s))
 		{
@@ -491,7 +492,7 @@ tree_node* staticChecker::eval(tree_node* s)
 	}
 	else
 	{
-		cout << "ERROR: car(s) : " << car_value << " cannot be mapped to valid operation\n";
+		cout << "TYPE ERROR: car(s) : " << car_value << " cannot be mapped to valid operation\n";
 		//this->printSExpression(s);
 		throw("");
 	}
@@ -852,6 +853,7 @@ bool staticChecker::isList(tree_node* s)
 		return false;
 }
 
+
 bool staticChecker::isList1(tree_node* s)
 {
 	//s is a list if and only if the right most leaf node is a special literal atom NIL
@@ -866,6 +868,23 @@ bool staticChecker::isList1(tree_node* s)
 		return true;
 	else
 		return false;
+}
+
+bool staticChecker::isList2(tree_node* s)
+{
+	//s is a list if and only if the right most leaf node is a special literal atom NIL
+	tree_node* temp = s;
+	if(!temp)
+		return false;
+	while(temp->right != NULL and temp->left != NULL)
+	{
+		if(!isNumeric(this->car(temp)))
+		{
+			return false;
+		}
+		temp = temp->right;
+	}
+	return true;
 }
 
 void staticChecker::inorderPrint(tree_node* node)

@@ -33,6 +33,7 @@ string getValueForType(string);
 class staticChecker{
 	public:
 		int flag;
+		int flag1;
 		//dlist is used to store information about DEFUN expression
 		//It stores formal parameter list, function name and function body
 		//struct dlist d_list;
@@ -63,6 +64,7 @@ class staticChecker{
 		void printSExpression(tree_node*);
 		bool isList(tree_node*);
 		bool isList1(tree_node*);
+		bool isList2(tree_node*);
 		void inorderPrint(tree_node*);
 		bool allListOfLengthTwo(tree_node*);
 		tree_node* COND_eval(tree_node*);
