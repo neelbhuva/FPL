@@ -22,11 +22,6 @@ struct dlist{
 
 using namespace std;
 
-void printmap(map<string,tree_node*>);
-tree_node* getFuncBody(string);
-bool inalist(string,map<string,tree_node*>);
-tree_node* getFormalParamValue(string,map<string,tree_node*>);
-void printlast(tree_node*);
 //extern vector<struct dlist*> dl;
 
 class emptyListChecker{

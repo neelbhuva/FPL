@@ -47,6 +47,7 @@ class staticChecker{
 		tree_node* cdr_type_check(tree_node* s);
 		tree_node* cons(tree_node* s1, tree_node* s2);
 		tree_node* atom(tree_node* s);
+		tree_node* atom1(tree_node* s);
 		tree_node* INT(tree_node* s);
 		tree_node* null(tree_node* s);
 		tree_node* eq(tree_node* s1,tree_node* s2);

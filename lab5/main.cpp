@@ -11,7 +11,8 @@
 #include "scanner.h"
 #include "binaryTree.h"
 #include "staticChecker.h"
-#include "common.h"
+#include "emptyListChecker.h"
+//#include "common.h"
 
 using namespace std;
 
@@ -132,8 +133,8 @@ void ParseStart(Scanner* scanner)
 	    {
 	    	throw("Parser Error");
 	    }
-	    bt.Print(bt.root);
-	    cout << "\nPrinting done...\n";
+	    //bt.Print(bt.root);
+	    //cout << "\nPrinting done...\n";
 	    try
 	    {
 	    	staticChecker ip;
@@ -168,12 +169,15 @@ void ParseStart(Scanner* scanner)
 	    try
 	    {
 	    	emptyListChecker elc;
-	    	tree_node* elc_result = elc.eval(bt.root);
+	    	//tree_node* elc_result = elc.eval(bt.root);
 	    }
 	    catch(...)
 	    {
 	    	return;
 	    }
+	    staticChecker ip;
+	    ip.printSExpression(bt.root);
+	    cout << endl;
 	}while(scanner->GetCurrent().first != "EOF");
 }
 

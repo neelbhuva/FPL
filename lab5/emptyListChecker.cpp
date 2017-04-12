@@ -15,7 +15,7 @@
 
 using namespace std;
 
-vector<struct dlist> dl;
+//vector<struct dlist> dl;
 //struct dlist* emptyListChecker::dl[100];
 //int emptyListChecker::i = 0;
 //vector<struct dlist*> emptyListChecker::dl = new vector<struct dlist*>[100];
@@ -40,12 +40,21 @@ tree_node* emptyListChecker::car(tree_node* s)
 {
 	if(!s or s->left == NULL and s->right == NULL)
 	{
+		if(s->value == "NIL")
+		{
+			cout << "EMPTY LIST ERROR : car failed for List[>=0]\n";
+			throw("");
+		}
 		//empty binary tree.
 		cout << "ERROR : car failed, undefined input\n";
 		throw("");
 	}
-	else
+	else if(length(s) > 0)
 		return s->left;
+	else
+	{
+		cout << "EMPTY LIST ERROR : car failed for List[>=0]\n"; throw("");
+	}
 }
 
 tree_node* emptyListChecker::cdr(tree_node* s)
@@ -76,13 +85,20 @@ tree_node* emptyListChecker::atom(tree_node* s)
 	if(!s){ cout << "ERROR : atom function failed, empty input\n"; throw(""); }
 	else if(s->left == NULL and s->right == NULL)
 	{
-		//cout << "Atom\n";
-		temp = this->createNode("T",NULL,NULL);
+		if(s->value == "NIL")
+		{
+			temp = this->createNode("F",NULL,NULL);
+		}
+		else
+		{
+			//cout << "Atom\n";
+			temp = this->createNode("T",NULL,NULL);
+		}
 	}
 	else if(s->left != NULL and s->right != NULL)
 	{
 		//cout << "Not an atom\n";
-		temp = this->createNode("NIL",NULL,NULL);
+		temp = this->createNode("F",NULL,NULL);
 		//cout << temp->value;
 	}
 	return temp;
@@ -97,12 +113,12 @@ tree_node* emptyListChecker::INT(tree_node* s)
 		if(isNumeric(s))
 			temp = this->createNode("T",NULL,NULL);
 		else
-			temp = this->createNode("NIL",NULL,NULL);
+			temp = this->createNode("F",NULL,NULL);
 	}
 	else if(s->left != NULL and s->right != NULL)
 	{
 		//cout << "Not an atom\n";
-		temp = this->createNode("NIL",NULL,NULL);
+		temp = this->createNode("F",NULL,NULL);
 		//cout << temp->value;
 	}
 	return temp;
@@ -120,7 +136,7 @@ tree_node* emptyListChecker::null(tree_node* s)
 	}
 	else
 	{
-		temp = this->createNode("NIL",NULL,NULL);
+		temp = this->createNode("F",NULL,NULL);
 	}
 	return temp;
 }
@@ -242,36 +258,30 @@ tree_node* emptyListChecker::greater(tree_node* s1,tree_node* s2)
 tree_node* emptyListChecker::eval(tree_node* s,map<string,tree_node*> alist)
 {
 	//cout << "In eval\n";
-	string art[] = {"PLUS", "MINUS","TIMES","LESS","GREATER"};
+	string art[] = {"PLUS","LESS"};
 	string un[] = {"ATOM", "INT","NULL"};
 	string cc[] = {"CAR","CDR"};
-	string oth[] = {"T","NIL","CONS","COND","EQ","QUOTE","DEFUN"};
+	string oth[] = {"T","F","CONS","COND","EQ"};
 
-	vector<string> arithmetic (art,art+5);
+	vector<string> arithmetic (art,art+2);
 	vector<string> unary (un,un+3);
 	vector<string> carcdr (cc,cc+2);
-	vector<string> other (oth,oth+7);
+	vector<string> other (oth,oth+5);
 
 	tree_node* temp = new tree_node();
 	//cout << "In eval : "; printmap(alist); cout << endl;
 	//cout << alist.empty() << "\n";
 	
-	if(this->INT(s)->value == "T")
+	if(isNumeric(s)) //AnyNat
 	{
 		//cout << s->value << " ";
 		return s;
 	}
-	else if(this->null(s)->value == "T")
+	else if(s->value == "NIL")//List[>=0]
 		return s;
-	else if(s->value == "T" and this->length(s) == 1)
+	else if((s->value == "T" or s->value == "F") and this->length(s) == 1)
 		return s;
-	else if(this->atom(s)->value == "T" and inalist(s->value,alist))
-	{
-		//it is a formal parameter. return its value.
-		temp = getFormalParamValue(s->value,alist);
-		return temp;
-	}
-	else if(this->atom(s)->value == "T"){ cout << "ERROR: eval failed, " << s->value << " not recognized\n"; throw("");}
+	else if(s->left == NULL and s->right == NULL){ cout << "EMPTY LIST ERROR: eval failed, " << s->value << " not recognized\n"; throw("");}
 	
 	string car_value = this->car(s)->value;
 	//cout << "car_value : " << car_value << "\n";
@@ -363,45 +373,6 @@ tree_node* emptyListChecker::eval(tree_node* s,map<string,tree_node*> alist)
 			cout << "ERROR in COND : Some si in (COND s1 s2 ...sn) is not a list or has length != 2\n";
 			throw("");
 		}
-
-	}
-	else if (car_value == "DEFUN")
-	{
-		//cout << "DEFUN found\n";
-		tree_node* temp1 = this->cdr(s);
-		temp = this->validate_defun_expression(temp1,arithmetic,unary,carcdr,other);			
-		//template<string,T> struct pair a[];
-		//myemptyListChecker(s,a,d);
-	}
-	else if (true)
-	{
-		if(this->atom(this->car(s))->value == "NIL")
-		{
-			cout << "ERROR : Function name cannot be a list in ";
-			this->printSExpression(s); cout << endl;
-			throw("");
-		}
-		//cout << "Preparing to call " << car_value << "\n";
-		//It might be a function call. Check if function name is present in d-list.
-		if(this->isFuncNameInDlist(car_value))
-		{
-			//Function name is found in d-list. Now validate (F s1 s2 ...)
-			this->validateFuncCall(s,car_value);
-			//now evaluate each si's and associate their values with formal parameters
-			//map<string,tree_node*> temp_alist = this->evaluateActualList(this->car(s)->value,this->cdr(s));
-			//printmap(temp_alist);
-			//temp = this->apply(car_value,this->cdr(s),temp_alist);
-			//this->printSExpression(s); //cout << endl;
-			temp = this->apply(car_value,this->evlist(this->cdr(s),alist),alist);
-			//cout << temp->value << "\n";
-
-		}
-		else
-		{
-			cout << "ERROR : " << car_value << " is not recognized as any function in "; 
-			this->printSExpression(s); cout << "\n";
-			throw("");
-		}
 	}
 	else
 	{
@@ -410,97 +381,6 @@ tree_node* emptyListChecker::eval(tree_node* s,map<string,tree_node*> alist)
 	}
 	//cout << "eval done\n";
 	return temp;
-}
-
-void printlast(tree_node* s)
-{
-	while(s->left != NULL)
-	{
-		cout << s->left->value;
-		s = s->right;
-	}
-	cout << "Last : " << s->value;
-}
-
-
-tree_node* emptyListChecker::evlist(tree_node* s,map<string,tree_node*> alist)
-{
-	tree_node* temp = new tree_node();
-	if(this->null(s)->value == "T")
-		temp->value = "NIL";
-	else 
-		temp = this->cons(this->eval(this->car(s),alist),this->evlist(this->cdr(s),alist));
-	return temp;
-}
-
-//same as getval(x,z)
-tree_node* getFormalParamValue(string param, map<string,tree_node*> alist)
-{
-	for(map<string,tree_node*>::iterator it = alist.begin(); it != alist.end(); ++it)
-	{
-    	if(it->first == param)
-    	{
-    		tree_node* temp = new tree_node();
-    		temp = it->second;
-    		return temp;
-    	}
-	}
-}
-
-//same as bound(x,z)
-bool inalist(string param, map<string,tree_node*> alist)
-{
-	//cout << "In inalist\n";
-	//printmap(alist);
-	//cout << param << "\n";
-	for(map<string,tree_node*>::iterator it = alist.begin(); it != alist.end(); ++it)
-	{
-		//cout << "Compare " << param << " with " << it->first << "\n"; 
-    	if(it->first == param)
-    	{
-    		//cout << "Found : " << param << endl;;
-    		return true;
-    	}
-	}
-	return false;
-}
-
-tree_node* emptyListChecker::apply(string F,tree_node* s, map<string,tree_node*> alist)
-{
-	//s is actual parameter list.
-	//cout << "In apply : " << F << " " << alist.empty() <<  " ";
-	tree_node* func_body = getFuncBody(F);
-	//cout << "Function body : "; this->printSExpression(func_body); cout << "\n";
-	return this->eval(func_body,this->addpairs(getFormalParam(F),s,alist));
-}
-
-map<string,tree_node*> emptyListChecker::addpairs(vector<string> formal_param, tree_node* actual_values, map<string,tree_node*> alist)
-{
-	tree_node* temp = actual_values;
-	for(int i = 0; i < formal_param.size(); i++)
-	{
-		alist[formal_param[i]] = this->car(temp);
-		temp = this->cdr(temp);
-	}
-	return alist;
-}
-
-tree_node* getFuncBody(string F)
-{
-	for(int i = 0; i < dl.size(); i++)
-	{
-		if(dl[i].func_name == F)
-			return dl[i].func_body;
-	}
-} 
-
-void printmap(map<string,tree_node*> alist)
-{
-	for(map<string,tree_node*>::iterator it = alist.begin(); it != alist.end(); ++it)
-	{
-    	cout << it->first << " => " << it->second->value << ' ';
-	}
-    cout << "\n";
 }
 
 tree_node* emptyListChecker::COND_eval(tree_node* s,map<string,tree_node*> alist)
@@ -526,124 +406,6 @@ tree_node* emptyListChecker::COND_eval(tree_node* s,map<string,tree_node*> alist
 		cout << "ERROR : None of the bi's are T in COND\n";
 		throw("");
 	}
-}
-
-//evalute actual parameter expressions and bind the values with formal parameters.
-map<string,tree_node*> emptyListChecker::evaluateActualList(string F,tree_node* s)
-{
-	//s is list of actual param, does not have F
-	//cout << "Evaluating actual parameters...\n";
-	//string F = this->car(s)->value;
-	vector<string> formal_param = this->getFormalParam(F);
-	map<string,tree_node*> alist;
-	//tree_node* temp = this->cdr(s);
-	tree_node* temp = s;
-	int i = 0;
-	while(temp->left != NULL)
-	{
-		tree_node* result = this->eval(this->car(temp));
-		alist[formal_param[i]] = result; i++;
-		temp = this->cdr(temp);
-	}
-	return alist;
-}
-
-vector<string> emptyListChecker::getFormalParam(string F)
-{
-	for(int i = 0; i < dl.size(); i++)
-	{
-		if(dl[i].func_name == F)
-			return dl[i].formal_param;
-	}
-}
-
-void emptyListChecker::validateFuncCall(tree_node* s,string F)
-{
-	//cout << "Validating Function call...\n";
-	int j;
-	for(int i = 0; i < dl.size(); i++)
-	{
-		if(dl[i].func_name == F)
-			j = i;
-	}
-	int actual_list_length = this->length(this->cdr(s));
-	int formal_list_length = (dl[j].formal_param).size();
-	if(actual_list_length != formal_list_length)
-	{
-		cout << "Length of actual list : " << actual_list_length << " in ";
-		this->printSExpression(s);
-		cout << " is not same as the length of formal list : " << formal_list_length << " found in d-list\n";
-		throw("");
-	}
-}
-
-tree_node* emptyListChecker::validate_defun_expression(tree_node* s, vector<string> arithmetic,vector<string> un,vector<string> cc,vector<string> other)
-{
-	//cout << "In validate_defun_expression\n";
-	//s is tree without DEFUN node
-	string F = this->car(s)->value;
-	//s1 is list of formal parameters
-	tree_node* s1 = this->car(this->cdr(s)); 
-	tree_node* s2 = this->car(this->cdr(this->cdr(s)));
-	vector<string> formal_param;
-	if(this->in_array(F,arithmetic) || this->in_array(F,un) || this->in_array(F,cc) || this->in_array(F,other))
-	{
-		cout << "ERROR : user defined function name " << F << " cannot be the same as built in function name\n";
-		throw("");
-	}
-	else if(!isList(this->car(this->cdr(s))))
-	{
-		cout << "ERROR : formal parameters (s1) in (DEFUN F s1 s2) is not a list\n";
-		throw("");
-	}
-	else if(isList(this->car(this->cdr(s))))
-	{
-		formal_param = this->isListOfLiteralAtoms(s1,arithmetic,un,cc,other);
-		//cout << formal_param[0] << "\n";
-	}
-	if(this->in_array(F,formal_param))
-	{
-		cout << "ERROR : Formal parameter : " << F << " in ";
-		this->printSExpression(s);
-		cout << " cannot have same name as its function name\n";
-		throw("");
-	}
-	struct dlist d_list;
-	d_list.func_name = F;
-	d_list.formal_param = formal_param;
-	d_list.func_body = s2;
-
-	struct dlist * temp = &d_list;
-	dl.push_back(d_list);
-	//emptyListChecker::dl[emptyListChecker::i] = new struct dlist;
-	//emptyListChecker::dl[emptyListChecker::i] = &d_list;
-	//emptyListChecker::i++;
-	//cout << emptyListChecker::i << "\n";
-	//cout << d_list.func_name;
-	tree_node* temp1 = new tree_node();
-	temp1->value = d_list.func_name;
-	//cout << d_list.formal_param[3] << "\n";
-	//this->printdlist(s2);
-	//this->printSExpression(d_list.func_body);
-	//cout << "\nvalidate_defun_expression done\n";
-	return temp1;
-}
-
-void emptyListChecker::printdlist(tree_node* s2)
-{
-	//cout << dl.size();
-	cout << "--------------dlist------------\n";
-	for(int i = 0; i < dl.size(); i++)
-	{
-		cout << dl[i].func_name << " (";
-		//cout << dl[i].formal_param.size();
-		for(int j = 0; j < (dl[i].formal_param).size(); j++)
-		{
-			cout << (dl[i].formal_param)[j] << " ";
-		} 
-		cout << ")"; this->printSExpression(s2); cout << "\n";
-	}
-	cout << "--------------dlist end------------\n";
 }
 
 vector<string> emptyListChecker::isListOfLiteralAtoms(tree_node* s1,vector<string> arithmetic,vector<string> unary,vector<string> carcdr,vector<string> other)

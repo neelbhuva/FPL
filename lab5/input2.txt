@@ -1,0 +1,8 @@
+(PLUS 7 6)
+(LESS 8 9)
+
+
+(CAR ())
+(CAR NIL)
+
+(CDR ())

@@ -128,7 +128,7 @@ tree_node* staticChecker::cons(tree_node* s1, tree_node* s2)
 	temp->right = s2;
 	//this->printSExpression(temp);
 	//this->inorderPrint(temp);
-	cout << "Cons done\n";
+	//cout << "Cons done\n";
 	return temp;
 }
 
@@ -151,7 +151,7 @@ tree_node* staticChecker::atom(tree_node* s)
 		}
 		else
 		{
-			cout << "H\n";
+			//cout << "H\n";
 			cout << "TYPE ERROR : s :" << s->value <<  " in (ATOM s) is not recognized\n";
 			throw("");
 		}
@@ -159,6 +159,31 @@ tree_node* staticChecker::atom(tree_node* s)
 		//temp = this->createNode("T",NULL,NULL);
 	}
 	else if(isList(s))
+	{
+		//it is a List(Nat). Expression is valid or well typed.
+		//cout << "Not an atom\n";
+		temp = this->createNode("F",NULL,NULL);
+		//cout << temp->value;
+	}
+	else
+	{
+		cout << "TYPE ERROR : s " << s->value << " in (ATOM s) is not recognized\n";
+		throw("");
+	}
+	return temp;
+}
+
+tree_node* staticChecker::atom1(tree_node* s)
+{
+	//cout << "In atom1()\n";
+	tree_node* temp = new tree_node();
+	if(!s){ cout << "ERROR : atom function failed, empty input\n"; throw(""); }
+	else if(s->left == NULL and s->right == NULL)
+	{
+		//cout << "Atom\n";
+		temp = this->createNode("T",NULL,NULL);
+	}
+	else if(isList1(s))
 	{
 		//it is a List(Nat). Expression is valid or well typed.
 		//cout << "Not an atom\n";
@@ -319,7 +344,7 @@ tree_node* staticChecker::less(tree_node* s1,tree_node* s2)
 		if(atoi(s1->value.c_str()) < atoi(s2->value.c_str()))
 			temp = this->createNode("T",NULL,NULL);
 		else
-			temp = this->createNode("NIL",NULL,NULL);
+			temp = this->createNode("F",NULL,NULL);
 	}
 	return temp;
 }
@@ -377,7 +402,7 @@ tree_node* staticChecker::eval(tree_node* s)
 	//cout << "car_value : " << car_value << "\n";
 	if(this->in_array(car_value,arithmetic))
 	{
-		cout << "Arithmetic\n";
+		//cout << "Arithmetic\n";
 		if(this->length(s) != 3){ cout << "TYPE ERROR : Length(s) not equal to 3 for " << car_value << "\n"; throw("");}
 		tree_node* s1 = this->car(this->cdr(s));
 		tree_node* s2 = this->car(this->cdr(this->cdr(s)));
@@ -424,7 +449,7 @@ tree_node* staticChecker::eval(tree_node* s)
 		tree_node* s1 = this->car(this->cdr(s));
 		tree_node* s2 = this->car(this->cdr(this->cdr(s)));
 		//cout << car_value << " " << s1->value << " " << s2->value << "\n";
-		if(this->atom(this->eval(s1))->value == "NIL" or this->atom(this->eval(s2))->value == "NIL")
+		if(this->atom(this->eval(s1))->value == "F" or this->atom(this->eval(s2))->value == "F")
 		{
 			cout << "ERROR : Atom not found after performing eval, cannot perform " << car_value << "\n";
 			throw("");
@@ -668,95 +693,6 @@ vector<string> staticChecker::getFormalParam(string F)
 	}
 }
 
-void staticChecker::validateFuncCall(tree_node* s,string F)
-{
-	//cout << "Validating Function call...\n";
-	int j;
-	for(int i = 0; i < dl.size(); i++)
-	{
-		if(dl[i].func_name == F)
-			j = i;
-	}
-	int actual_list_length = this->length(this->cdr(s));
-	int formal_list_length = (dl[j].formal_param).size();
-	if(actual_list_length != formal_list_length)
-	{
-		cout << "Length of actual list : " << actual_list_length << " in ";
-		this->printSExpression(s);
-		cout << " is not same as the length of formal list : " << formal_list_length << " found in d-list\n";
-		throw("");
-	}
-}
-
-tree_node* staticChecker::validate_defun_expression(tree_node* s, vector<string> arithmetic,vector<string> un,vector<string> cc,vector<string> other)
-{
-	//cout << "In validate_defun_expression\n";
-	//s is tree without DEFUN node
-	string F = this->car(s)->value;
-	//s1 is list of formal parameters
-	tree_node* s1 = this->car(this->cdr(s)); 
-	tree_node* s2 = this->car(this->cdr(this->cdr(s)));
-	vector<string> formal_param;
-	if(this->in_array(F,arithmetic) || this->in_array(F,un) || this->in_array(F,cc) || this->in_array(F,other))
-	{
-		cout << "ERROR : user defined function name " << F << " cannot be the same as built in function name\n";
-		throw("");
-	}
-	else if(!isList(this->car(this->cdr(s))))
-	{
-		cout << "ERROR : formal parameters (s1) in (DEFUN F s1 s2) is not a list\n";
-		throw("");
-	}
-	else if(isList(this->car(this->cdr(s))))
-	{
-		formal_param = this->isListOfLiteralAtoms(s1,arithmetic,un,cc,other);
-		//cout << formal_param[0] << "\n";
-	}
-	if(this->in_array(F,formal_param))
-	{
-		cout << "ERROR : Formal parameter : " << F << " in ";
-		this->printSExpression(s);
-		cout << " cannot have same name as its function name\n";
-		throw("");
-	}
-	struct dlist d_list;
-	d_list.func_name = F;
-	d_list.formal_param = formal_param;
-	d_list.func_body = s2;
-
-	struct dlist * temp = &d_list;
-	dl.push_back(d_list);
-	//staticChecker::dl[staticChecker::i] = new struct dlist;
-	//staticChecker::dl[staticChecker::i] = &d_list;
-	//staticChecker::i++;
-	//cout << staticChecker::i << "\n";
-	//cout << d_list.func_name;
-	tree_node* temp1 = new tree_node();
-	temp1->value = d_list.func_name;
-	//cout << d_list.formal_param[3] << "\n";
-	//this->printdlist(s2);
-	//this->printSExpression(d_list.func_body);
-	//cout << "\nvalidate_defun_expression done\n";
-	return temp1;
-}
-
-void staticChecker::printdlist(tree_node* s2)
-{
-	//cout << dl.size();
-	cout << "--------------dlist------------\n";
-	for(int i = 0; i < dl.size(); i++)
-	{
-		cout << dl[i].func_name << " (";
-		//cout << dl[i].formal_param.size();
-		for(int j = 0; j < (dl[i].formal_param).size(); j++)
-		{
-			cout << (dl[i].formal_param)[j] << " ";
-		} 
-		cout << ")"; this->printSExpression(s2); cout << "\n";
-	}
-	cout << "--------------dlist end------------\n";
-}
-
 vector<string> staticChecker::isListOfLiteralAtoms(tree_node* s1,vector<string> arithmetic,vector<string> unary,vector<string> carcdr,vector<string> other)
 {
 	//cout << "In isListOfLiteralAtoms\n";
@@ -805,8 +741,8 @@ bool staticChecker::isFuncNameInDlist(string F)
 
 void staticChecker::printSExpression(tree_node* s)
 {
-	cout << "In printSExpression...\n";
-	if(this->atom(s)->value == "T")
+	//cout << "In printSExpression...\n";
+	if(this->atom1(s)->value == "T")
 	{
 		cout << s->value;
 		if(flag == 0)
@@ -826,7 +762,7 @@ void staticChecker::printSExpression(tree_node* s)
 		{
 			flag = 1;
 			this->printSExpression(this->car(s));
-			if(this->cdr(s)->value == "NIL")
+			if(this->cdr(s)->value == "F")
 				cout << ")";
 			else
 			{
